@@ -1,37 +1,35 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Enums; //
 
 namespace IgrejaSocial.Domain.Entities
 {
     public class Equipamento
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid(); //
 
         [Required(ErrorMessage = "O código de património é obrigatório.")]
         [StringLength(20)]
-        public string CodigoPatrimonio { get; set; } // Ex: CR-001
+        public string CodigoPatrimonio { get; set; } //
 
         [Required]
-        public TipoEquipamento Tipo { get; set; }
+        public TipoEquipamento Tipo { get; set; } //
 
         [Required]
-        public EstadoConservacao Estado { get; set; }
+        public EstadoConservacao Estado { get; set; } //
 
         [Required(ErrorMessage = "A descrição é necessária para identificação.")]
         [StringLength(200)]
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } //
 
-        public bool IsDisponivel { get; set; } = true;
+        public bool IsDisponivel { get; set; } = true; //
 
         [DataType(DataType.Date)]
-        public DateTime DataAquisicao { get; set; } = DateTime.Now;
+        public DateTime DataAquisicao { get; set; } = DateTime.Now; //
 
-        public decimal ValorEstimado { get; set; }
+        public decimal ValorEstimado { get; set; } //
 
-        public string ObservacoesInternas { get; set; }
-
-        // Futuro Relacionamento: public virtual ICollection<Emprestimo> HistoricoEmprestimos { get; set; }
+        public string ObservacoesInternas { get; set; } //
     }
 }

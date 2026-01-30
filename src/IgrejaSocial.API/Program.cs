@@ -33,6 +33,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<SocialAnalysisService>();
+builder.Services.AddScoped<PatrimonioService>();
 
 var app = builder.Build();
 
