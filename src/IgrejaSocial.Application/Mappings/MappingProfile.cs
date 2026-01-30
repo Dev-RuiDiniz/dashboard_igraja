@@ -8,13 +8,13 @@ namespace IgrejaSocial.Application.Mappings
     {
         public MappingProfile()
         {
-            // Mapeamento simples: As propriedades com nomes iguais são automáticas
+            // Mapeamento de Família
             CreateMap<Familia, FamiliaDto>();
-            
-            // Se precisar de mapeamento para Membros
+
+            // Mapeamento de Membro (Corrigido)
             CreateMap<MembroFamilia, MembroFamiliaDto>();
-            
-            // Mapeamento para Equipamentos
+
+            // Mapeamento de Equipamento (Corrigido)
             CreateMap<Equipamento, EquipamentoDto>();
         }
     }
