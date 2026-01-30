@@ -1,22 +1,26 @@
 using IgrejaSocial.Infrastructure.Data;
+using IgrejaSocial.Domain.Interfaces;
+using IgrejaSocial.Infrastructure.ExternalServices;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuração do Banco de Dados
+// --- 1. Configuração do Banco de Dados (SQLite) ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// Adiciona serviços para gerar o Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// --- 2. Registro do Serviço de CEP ---
+// Agora o builder já existe, então podemos registrar o HttpClient
+builder.Services.AddHttpClient<ICepService, ViaCepService>(client =>
+{
+    client.BaseAddress = new Uri("https://viacep.com.br/ws/");
+});
 
-// 2. Controladores e Serialização JSON
-// Configuramos para ignorar ciclos de referência (comum em relações Familia <-> Membro)
+// --- 3. Controladores e Serialização JSON ---
 builder.Services.AddControllers()
     .AddJsonOptions(options => 
     {
@@ -24,13 +28,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// 3. Swagger/OpenAPI para documentação
+// --- 4. Swagger/OpenAPI ---
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4. Pipeline de Requisições HTTP
+// --- 5. Pipeline de Requisições HTTP ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -38,10 +42,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
-// Mapeia os controladores da API
 app.MapControllers();
 
 app.Run();
