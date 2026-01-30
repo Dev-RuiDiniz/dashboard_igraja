@@ -1,5 +1,7 @@
 using IgrejaSocial.Domain.Entities;
+using IgrejaSocial.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace IgrejaSocial.Infrastructure.Data
 {
@@ -15,48 +17,86 @@ namespace IgrejaSocial.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração: Família
+            // 1. Configuração: Família
             modelBuilder.Entity<Familia>(entity =>
             {
                 entity.HasKey(f => f.Id);
-                
-                // Índice Único para o CPF do Responsável
                 entity.HasIndex(f => f.CpfResponsavel).IsUnique();
-                
                 entity.Property(f => f.NomeResponsavel).IsRequired().HasMaxLength(150);
                 entity.Property(f => f.Endereco).IsRequired().HasMaxLength(255);
-                
-                // Configuração de Precisão Decimal para Valores Financeiros
                 entity.Property(f => f.RendaFamiliarTotal).HasPrecision(18, 2);
 
-                // Relacionamento 1:N (Uma Família tem muitos Membros)
                 entity.HasMany(f => f.Membros)
                       .WithOne(m => m.Familia)
                       .HasForeignKey(m => m.FamiliaId)
-                      .OnDelete(DeleteBehavior.Cascade); // Se a família for excluída, apaga os membros
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Configuração: MembroFamilia
+            // 2. Configuração: MembroFamilia
             modelBuilder.Entity<MembroFamilia>(entity =>
             {
                 entity.HasKey(m => m.Id);
                 entity.Property(m => m.Nome).IsRequired().HasMaxLength(150);
-                
-                // CPF de membro é opcional mas, se houver, deve ser mapeado adequadamente
                 entity.Property(m => m.Cpf).HasMaxLength(11);
+                entity.Property(m => m.RendaIndividual).HasPrecision(18, 2);
             });
 
-            // Configuração: Equipamento
+            // 3. Configuração: Equipamento
             modelBuilder.Entity<Equipamento>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                
-                // Índice Único para o Código de Patrimônio
                 entity.HasIndex(e => e.CodigoPatrimonio).IsUnique();
-                
                 entity.Property(e => e.CodigoPatrimonio).IsRequired().HasMaxLength(20);
                 entity.Property(e => e.ValorEstimado).HasPrecision(18, 2);
             });
+
+            // 4. SEED DE DADOS (Tarefa 10)
+            SeedDados(modelBuilder);
+        }
+
+        private void SeedDados(ModelBuilder modelBuilder)
+        {
+            // Seed Equipamentos
+            modelBuilder.Entity<Equipamento>().HasData(
+                new Equipamento
+                {
+                    Id = Guid.Parse("a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d"),
+                    CodigoPatrimonio = "CAD-01",
+                    Tipo = TipoEquipamento.CadeiraRodas,
+                    Estado = EstadoConservacao.Novo,
+                    Descricao = "Cadeira de rodas manual dobrável",
+                    IsDisponivel = true,
+                    ValorEstimado = 850.00m,
+                    DataAquisicao = DateTime.Now
+                },
+                new Equipamento
+                {
+                    Id = Guid.Parse("b2c3d4e5-f6a7-5b6c-9d0e-1f2a3b4c5d6e"),
+                    CodigoPatrimonio = "AND-01",
+                    Tipo = TipoEquipamento.Andador,
+                    Estado = EstadoConservacao.Bom,
+                    Descricao = "Andador de alumínio com rodas",
+                    IsDisponivel = true,
+                    ValorEstimado = 250.00m,
+                    DataAquisicao = DateTime.Now
+                }
+            );
+
+            // Seed Família Exemplo (Importante para testar Vulnerabilidade)
+            var familiaId = Guid.Parse("c3d4e5f6-a7b8-6c7d-0e1f-2a3b4c5d6e7f");
+            modelBuilder.Entity<Familia>().HasData(
+                new Familia
+                {
+                    Id = familiaId,
+                    NomeResponsavel = "João da Silva (Teste Seed)",
+                    CpfResponsavel = "12345678901",
+                    Residencia = TipoResidencia.Alugada,
+                    Status = StatusAcompanhamento.Ativo,
+                    Endereco = "Rua das Oliveiras, 50 - Bairro Solidariedade",
+                    RendaFamiliarTotal = 400.00m, // Renda baixa para forçar Vulnerabilidade = True
+                    DataCadastro = DateTime.Now
+                }
+            );
         }
     }
 }
