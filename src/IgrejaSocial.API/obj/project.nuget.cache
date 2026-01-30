@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "3waHtJxU9ZU=",
-  "success": false,
+  "dgSpecHash": "qWQ9J0W35Y0=",
+  "success": true,
   "projectFilePath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Rui Francisco\\.nuget\\packages\\automapper\\16.0.0\\automapper.16.0.0.nupkg.sha512",
     "C:\\Users\\Rui Francisco\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\Rui Francisco\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\Rui Francisco\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
@@ -68,10 +69,11 @@
   ],
   "logs": [
     {
-      "code": "NU1107",
-      "level": "Error",
-      "message": "Version conflict detected for AutoMapper. Install/reference AutoMapper 16.0.0 directly to project IgrejaSocial.API to resolve this issue. \r\n IgrejaSocial.API -> IgrejaSocial.Application -> AutoMapper (>= 16.0.0) \r\n IgrejaSocial.API -> AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 -> AutoMapper (= 12.0.1).",
+      "code": "NU1608",
+      "level": "Warning",
+      "message": "Versão detectada do pacote fora da restrição de dependência: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requer AutoMapper (= 12.0.1), mas a versão AutoMapper 16.0.0 foi resolvida.",
       "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
+      "warningLevel": 1,
       "filePath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
       "libraryId": "AutoMapper",
       "targetGraphs": [

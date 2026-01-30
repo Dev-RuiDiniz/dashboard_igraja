@@ -8,14 +8,19 @@ namespace IgrejaSocial.Application.Mappings
     {
         public MappingProfile()
         {
-            // Mapeamento de Família
+            // Mapeamento Família -> FamiliaDto
             CreateMap<Familia, FamiliaDto>();
 
-            // Mapeamento de Membro (Corrigido)
-            CreateMap<MembroFamilia, MembroFamiliaDto>();
+            // Mapeamento Membro -> MembroFamiliaDto
+            // Convertendo Enums para String para facilitar a exibição na UI
+            CreateMap<MembroFamilia, MembroFamiliaDto>()
+                .ForMember(dest => dest.Parentesco, opt => opt.MapFrom(src => src.Parentesco.ToString()))
+                .ForMember(dest => dest.Idade, opt => opt.MapFrom(src => src.Idade));
 
-            // Mapeamento de Equipamento (Corrigido)
-            CreateMap<Equipamento, EquipamentoDto>();
+            // Mapeamento Equipamento -> EquipamentoDto
+            CreateMap<Equipamento, EquipamentoDto>()
+                .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => src.Tipo.ToString()))
+                .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.Estado.ToString()));
         }
     }
 }
