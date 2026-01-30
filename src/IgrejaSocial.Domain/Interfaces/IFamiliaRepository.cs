@@ -1,12 +1,17 @@
 using IgrejaSocial.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IgrejaSocial.Domain.Interfaces
 {
     public interface IFamiliaRepository
     {
         Task<Familia?> ObterPorIdAsync(Guid id);
+        Task<Familia?> ObterPorCpfAsync(string cpf);
         Task<IEnumerable<Familia>> ListarTodasAsync();
-        Task<IEnumerable<Familia>> ListarVulneraveisAsync(); // Consulta complexa
+        Task<IEnumerable<Familia>> ListarVulneraveisAsync();
+        Task<IEnumerable<Familia>> ListarPorBairroAsync(string bairro);
         Task AdicionarAsync(Familia familia);
         void Atualizar(Familia familia);
         Task SalvarAlteracoesAsync();

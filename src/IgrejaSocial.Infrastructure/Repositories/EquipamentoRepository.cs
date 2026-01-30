@@ -1,7 +1,12 @@
 using IgrejaSocial.Domain.Entities;
+using IgrejaSocial.Domain.Enums;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IgrejaSocial.Infrastructure.Repositories
 {
@@ -14,10 +19,7 @@ namespace IgrejaSocial.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Equipamento?> ObterPorIdAsync(Guid id)
-        {
-            return await _context.Equipamentos.FindAsync(id);
-        }
+        public async Task<Equipamento?> ObterPorIdAsync(Guid id) => await _context.Equipamentos.FindAsync(id);
 
         public async Task<Equipamento?> ObterPorCodigoAsync(string codigo)
         {
@@ -25,10 +27,7 @@ namespace IgrejaSocial.Infrastructure.Repositories
                 .FirstOrDefaultAsync(e => e.CodigoPatrimonio == codigo);
         }
 
-        public async Task<IEnumerable<Equipamento>> ListarTodosAsync()
-        {
-            return await _context.Equipamentos.ToListAsync();
-        }
+        public async Task<IEnumerable<Equipamento>> ListarTodosAsync() => await _context.Equipamentos.ToListAsync();
 
         public async Task<IEnumerable<Equipamento>> ListarDisponiveisAsync()
         {
@@ -37,19 +36,24 @@ namespace IgrejaSocial.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task AdicionarAsync(Equipamento equipamento)
+        public async Task<IEnumerable<Equipamento>> ListarPorStatusAsync(bool disponivel)
         {
-            await _context.Equipamentos.AddAsync(equipamento);
+            return await _context.Equipamentos
+                .Where(e => e.IsDisponivel == disponivel)
+                .ToListAsync();
         }
 
-        public void Atualizar(Equipamento equipamento)
+        public async Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, EstadoConservacao estado)
         {
-            _context.Equipamentos.Update(equipamento);
+            return await _context.Equipamentos
+                .Where(e => e.Tipo == tipo && e.Estado == estado)
+                .ToListAsync();
         }
 
-        public async Task SalvarAlteracoesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
+        public async Task AdicionarAsync(Equipamento equipamento) => await _context.Equipamentos.AddAsync(equipamento);
+
+        public void Atualizar(Equipamento equipamento) => _context.Equipamentos.Update(equipamento);
+
+        public async Task SalvarAlteracoesAsync() => await _context.SaveChangesAsync();
     }
 }

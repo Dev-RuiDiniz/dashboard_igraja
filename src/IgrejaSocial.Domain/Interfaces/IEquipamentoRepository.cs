@@ -1,4 +1,8 @@
 using IgrejaSocial.Domain.Entities;
+using IgrejaSocial.Domain.Enums; // Adicionado para resolver CS0246
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IgrejaSocial.Domain.Interfaces
 {
@@ -8,6 +12,8 @@ namespace IgrejaSocial.Domain.Interfaces
         Task<Equipamento?> ObterPorCodigoAsync(string codigo);
         Task<IEnumerable<Equipamento>> ListarTodosAsync();
         Task<IEnumerable<Equipamento>> ListarDisponiveisAsync();
+        Task<IEnumerable<Equipamento>> ListarPorStatusAsync(bool disponivel);
+        Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, EstadoConservacao estado);
         Task AdicionarAsync(Equipamento equipamento);
         void Atualizar(Equipamento equipamento);
         Task SalvarAlteracoesAsync();

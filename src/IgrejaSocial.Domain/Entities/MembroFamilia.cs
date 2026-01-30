@@ -38,7 +38,7 @@ namespace IgrejaSocial.Domain.Entities
         [ForeignKey("FamiliaId")]
         public virtual Familia Familia { get; set; }
 
-        // Cálculo dinâmico de idade (Roadmap Tarefa 2)
+        // Cálculo dinâmico de idade ajustado para o dia atual
         public int Idade => DateTime.Today.Year - DataNascimento.Year - 
             (DateTime.Today < DataNascimento.AddYears(DateTime.Today.Year - DataNascimento.Year) ? 1 : 0);
     }

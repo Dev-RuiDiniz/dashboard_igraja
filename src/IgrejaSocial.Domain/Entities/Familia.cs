@@ -35,26 +35,18 @@ namespace IgrejaSocial.Domain.Entities
         [Phone(ErrorMessage = "Telefone em formato inválido.")]
         public string TelefoneContato { get; set; }
 
-        [Range(0, 100000, ErrorMessage = "A renda total deve ser um valor positivo.")]
         public decimal RendaFamiliarTotal { get; set; }
 
         public string Observacoes { get; set; }
 
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
-        // Propriedades Computadas (Business Logic - Roadmap Tarefa 1)
+        // Logística de Negócio Corrigida: Soma a renda de todos os membros para a média per capita
         public int TotalIntegrantes => Membros.Count + 1;
 
-        public decimal RendaPerCapita 
-        {
-            get
-            {
-                if (TotalIntegrantes == 0) return 0;
-                // Soma a renda declarada da família + renda individual de cada membro
-                decimal rendaTotalAbsoluta = RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual);
-                return rendaTotalAbsoluta / TotalIntegrantes;
-            }
-        }
+        public decimal RendaPerCapita => TotalIntegrantes > 0 
+            ? (RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual)) / TotalIntegrantes 
+            : 0;
 
         public bool IsVulneravel => RendaPerCapita < 660.00m;
 
