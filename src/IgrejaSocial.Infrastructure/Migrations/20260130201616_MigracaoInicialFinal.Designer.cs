@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IgrejaSocial.Infrastructure.Migrations
 {
     [DbContext(typeof(IgrejaSocialDbContext))]
-    [Migration("20260130201235_InitialSqlite")]
-    partial class InitialSqlite
+    [Migration("20260130201616_MigracaoInicialFinal")]
+    partial class MigracaoInicialFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
