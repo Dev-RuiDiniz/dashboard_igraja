@@ -1,0 +1,35 @@
+## [Visual Studio / .NET]
+bin/
+obj/
+out/
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+## [Build & Publishing]
+publish/
+*.pfx
+*.publishsettings
+
+## [Entity Framework / Migrations]
+*.log
+*.sql
+# Nota: Mantenha os arquivos .cs de migração, mas ignore logs de runtime
+
+## [Secrets & Environment]
+# Não ignore o appsettings.json padrão, apenas os específicos de ambiente/segredos
+appsettings.Development.json
+appsettings.Local.json
+*.env
+
+## [OS Specific]
+.DS_Store
+Thumbs.db
+
+## [Packages]
+*.nupkg
+.tools/
+.nuget/
+# Restaurações automáticas devem ser feitas via dotnet restore
