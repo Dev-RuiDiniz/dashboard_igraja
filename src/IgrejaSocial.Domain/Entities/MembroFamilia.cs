@@ -26,6 +26,8 @@ namespace IgrejaSocial.Domain.Entities
         [Required(ErrorMessage = "O status ocupacional deve ser informado.")]
         public StatusOcupacional SituacaoTrabalho { get; set; } // Novo campo
 
+        public decimal RendaIndividual { get; set; }
+
         public string Cpf { get; set; }
 
         public bool PossuiDeficiencia { get; set; }

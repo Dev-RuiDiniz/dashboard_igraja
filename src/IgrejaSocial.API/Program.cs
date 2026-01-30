@@ -1,6 +1,7 @@
 using IgrejaSocial.Infrastructure.Data;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Infrastructure.ExternalServices;
+using IgrejaSocial.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -31,6 +32,7 @@ builder.Services.AddControllers()
 // --- 4. Swagger/OpenAPI ---
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<SocialAnalysisService>();
 
 var app = builder.Build();
 
