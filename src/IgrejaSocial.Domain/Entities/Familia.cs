@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using IgrejaSocial.Domain.Enums; // Adicionado para acessar os Enums
+using IgrejaSocial.Domain.Enums;
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -20,10 +20,10 @@ namespace IgrejaSocial.Domain.Entities
         public string CpfResponsavel { get; set; }
 
         [Required]
-        public TipoResidencia Residencia { get; set; } // Novo campo
+        public TipoResidencia Residencia { get; set; }
 
         [Required]
-        public StatusAcompanhamento Status { get; set; } // Novo campo
+        public StatusAcompanhamento Status { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DataCadastro { get; set; } = DateTime.Now;
@@ -42,9 +42,19 @@ namespace IgrejaSocial.Domain.Entities
 
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
+        // Propriedades Computadas (Business Logic - Roadmap Tarefa 1)
         public int TotalIntegrantes => Membros.Count + 1;
 
-        public decimal RendaPerCapita => TotalIntegrantes > 0 ? RendaFamiliarTotal / TotalIntegrantes : 0;
+        public decimal RendaPerCapita 
+        {
+            get
+            {
+                if (TotalIntegrantes == 0) return 0;
+                // Soma a renda declarada da família + renda individual de cada membro
+                decimal rendaTotalAbsoluta = RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual);
+                return rendaTotalAbsoluta / TotalIntegrantes;
+            }
+        }
 
         public bool IsVulneravel => RendaPerCapita < 660.00m;
 
