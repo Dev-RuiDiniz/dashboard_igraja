@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Validations;
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -28,6 +29,7 @@ namespace IgrejaSocial.Domain.Entities
 
         public decimal RendaIndividual { get; set; }
 
+        [Cpf]
         public string Cpf { get; set; }
 
         public bool PossuiDeficiencia { get; set; }

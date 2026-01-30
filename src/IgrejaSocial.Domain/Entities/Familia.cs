@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Validations;
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -16,7 +17,7 @@ namespace IgrejaSocial.Domain.Entities
         public string NomeResponsavel { get; set; }
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
-        [RegularExpression(@"^\d{11}$", ErrorMessage = "O CPF deve conter apenas os 11 dígitos numéricos.")]
+        [Cpf]
         public string CpfResponsavel { get; set; }
 
         [Required]
