@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using IgrejaSocial.Domain.Enums; // Adicionado para acessar os Enums
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -17,21 +18,24 @@ namespace IgrejaSocial.Domain.Entities
         public DateTime DataNascimento { get; set; }
 
         [Required(ErrorMessage = "O parentesco deve ser informado.")]
-        public string Parentesco { get; set; } // Ex: Filho, Cônjuge, Avô
+        public TipoParentesco Parentesco { get; set; } // Atualizado para Enum
+
+        [Required(ErrorMessage = "A escolaridade deve ser informada.")]
+        public Escolaridade NivelEscolar { get; set; } // Novo campo
+
+        [Required(ErrorMessage = "O status ocupacional deve ser informado.")]
+        public StatusOcupacional SituacaoTrabalho { get; set; } // Novo campo
 
         public string Cpf { get; set; }
 
         public bool PossuiDeficiencia { get; set; }
 
-        // Foreign Key
         [Required]
         public Guid FamiliaId { get; set; }
 
-        // Propriedade de Navegação
         [ForeignKey("FamiliaId")]
         public virtual Familia Familia { get; set; }
 
-        // Lógica de Domínio
         public int Idade => DateTime.Today.Year - DataNascimento.Year - 
             (DateTime.Today < DataNascimento.AddYears(DateTime.Today.Year - DataNascimento.Year) ? 1 : 0);
     }

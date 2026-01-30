@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using IgrejaSocial.Domain.Enums; // Adicionado para acessar os Enums
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -18,6 +19,12 @@ namespace IgrejaSocial.Domain.Entities
         [RegularExpression(@"^\d{11}$", ErrorMessage = "O CPF deve conter apenas os 11 dígitos numéricos.")]
         public string CpfResponsavel { get; set; }
 
+        [Required]
+        public TipoResidencia Residencia { get; set; } // Novo campo
+
+        [Required]
+        public StatusAcompanhamento Status { get; set; } // Novo campo
+
         [DataType(DataType.Date)]
         public DateTime DataCadastro { get; set; } = DateTime.Now;
 
@@ -33,33 +40,14 @@ namespace IgrejaSocial.Domain.Entities
 
         public string Observacoes { get; set; }
 
-        // --- Relacionamentos ---
-        
-        /// <summary>
-        /// Coleção de dependentes da família.
-        /// </summary>
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
-        // --- Propriedades Somente Leitura (Lógica de Negócio / DDD) ---
-
-        /// <summary>
-        /// Total de pessoas considerando o Responsável + Dependentes.
-        /// </summary>
         public int TotalIntegrantes => Membros.Count + 1;
 
-        /// <summary>
-        /// Cálculo dinâmico da renda por pessoa.
-        /// </summary>
         public decimal RendaPerCapita => TotalIntegrantes > 0 ? RendaFamiliarTotal / TotalIntegrantes : 0;
 
-        /// <summary>
-        /// Define se a família está abaixo da linha de pobreza (Ex: R$ 660,00 per capita).
-        /// </summary>
         public bool IsVulneravel => RendaPerCapita < 660.00m;
 
-        /// <summary>
-        /// Atalho para verificar se há crianças (menores de 12 anos) na composição familiar.
-        /// </summary>
         public bool PossuiCriancas => Membros.Any(m => m.Idade < 12);
     }
 }
