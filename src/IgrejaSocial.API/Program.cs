@@ -1,6 +1,7 @@
 using IgrejaSocial.Infrastructure.Data;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Infrastructure.ExternalServices;
+using IgrejaSocial.Infrastructure.Repositories;
 using IgrejaSocial.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -34,6 +35,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<SocialAnalysisService>();
 builder.Services.AddScoped<PatrimonioService>();
+builder.Services.AddScoped<IFamiliaRepository, FamiliaRepository>();
+builder.Services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();
 
 var app = builder.Build();
 
