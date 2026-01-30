@@ -11,6 +11,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// Adiciona serviços para gerar o Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // 2. Controladores e Serialização JSON
 // Configuramos para ignorar ciclos de referência (comum em relações Familia <-> Membro)
 builder.Services.AddControllers()
