@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -24,25 +25,41 @@ namespace IgrejaSocial.Domain.Entities
         [StringLength(255)]
         public string Endereco { get; set; }
 
+        [Phone(ErrorMessage = "Telefone em formato inválido.")]
         public string TelefoneContato { get; set; }
 
         [Range(0, 100000, ErrorMessage = "A renda total deve ser um valor positivo.")]
         public decimal RendaFamiliarTotal { get; set; }
 
-        [Range(1, 20, ErrorMessage = "A família deve ter pelo menos 1 integrante.")]
-        public int QuantidadeIntegrantes { get; set; }
-
-        // Propriedade Calculada (Lógica de Negócio)
-        public decimal RendaPerCapita => QuantidadeIntegrantes > 0 ? RendaFamiliarTotal / QuantidadeIntegrantes : 0;
-
-        // Regra de Vulnerabilidade Simplificada
-        public bool IsVulneravel => RendaPerCapita < 660.00m; // Exemplo: metade de um salário mínimo
-
         public string Observacoes { get; set; }
+
+        // --- Relacionamentos ---
+        
+        /// <summary>
+        /// Coleção de dependentes da família.
+        /// </summary>
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
-        // Relacionamentos (Navegação)
-        // public virtual ICollection<Membro> Membros { get; set; }
-        // public virtual ICollection<EntregaCesta> HistoricoEntregas { get; set; }
+        // --- Propriedades Somente Leitura (Lógica de Negócio / DDD) ---
+
+        /// <summary>
+        /// Total de pessoas considerando o Responsável + Dependentes.
+        /// </summary>
+        public int TotalIntegrantes => Membros.Count + 1;
+
+        /// <summary>
+        /// Cálculo dinâmico da renda por pessoa.
+        /// </summary>
+        public decimal RendaPerCapita => TotalIntegrantes > 0 ? RendaFamiliarTotal / TotalIntegrantes : 0;
+
+        /// <summary>
+        /// Define se a família está abaixo da linha de pobreza (Ex: R$ 660,00 per capita).
+        /// </summary>
+        public bool IsVulneravel => RendaPerCapita < 660.00m;
+
+        /// <summary>
+        /// Atalho para verificar se há crianças (menores de 12 anos) na composição familiar.
+        /// </summary>
+        public bool PossuiCriancas => Membros.Any(m => m.Idade < 12);
     }
 }
