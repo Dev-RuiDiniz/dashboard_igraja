@@ -1,5 +1,6 @@
 using IgrejaSocial.Domain.Entities;
 using IgrejaSocial.Domain.Interfaces;
+using IgrejaSocial.Domain.Enums;
 using IgrejaSocial.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,7 +33,6 @@ namespace IgrejaSocial.Infrastructure.Repositories
                 .FirstOrDefaultAsync(f => f.CpfResponsavel == cpf);
         }
 
-        // Correção do erro CS0535: Nome deve ser idêntico à interface
         public async Task<IEnumerable<Familia>> ListarTodasAsync()
         {
             return await _context.Familias
@@ -50,9 +50,20 @@ namespace IgrejaSocial.Infrastructure.Repositories
 
         public async Task<IEnumerable<Familia>> ListarVulneraveisAsync()
         {
-            // Busca os dados e aplica a lógica de vulnerabilidade definida na Entidade
+            // Busca os dados incluindo membros para que a propriedade computada IsVulneravel funcione
             var familias = await _context.Familias.Include(f => f.Membros).ToListAsync();
             return familias.Where(f => f.IsVulneravel);
+        }
+
+        public async Task<bool> JaRecebeuBeneficioNoMesAtualAsync(Guid familiaId)
+        {
+            var inicioDoMes = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            
+            // Lógica de validação temporal para bloqueio na UI (Tarefa 6 do Roadmap)
+            return await _context.Familias
+                .AnyAsync(f => f.Id == familiaId && 
+                               f.Status == StatusAcompanhamento.Ativo && 
+                               f.DataCadastro >= inicioDoMes); 
         }
 
         public async Task AdicionarAsync(Familia familia) => await _context.Familias.AddAsync(familia);
