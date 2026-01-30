@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/IgrejaSocial.API/IgrejaSocial.API.csproj" />
+    <Project Path="src/IgrejaSocial.Application/IgrejaSocial.Application.csproj" />
+    <Project Path="src/IgrejaSocial.Domain/IgrejaSocial.Domain.csproj" />
+    <Project Path="src/IgrejaSocial.Infrastructure/IgrejaSocial.Infrastructure.csproj" />
+    <Project Path="src/IgrejaSocial.Web/IgrejaSocial.Web.csproj" />
+  </Folder>
+</Solution>
