@@ -39,6 +39,7 @@ namespace IgrejaSocial.Domain.Entities
         public bool IsVulneravel => RendaPerCapita < 660.00m; // Exemplo: metade de um salário mínimo
 
         public string Observacoes { get; set; }
+        public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
         // Relacionamentos (Navegação)
         // public virtual ICollection<Membro> Membros { get; set; }

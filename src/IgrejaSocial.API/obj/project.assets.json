@@ -36,6 +36,42 @@
             "related": ".pdb;.xml"
           }
         }
+      },
+      "IgrejaSocial.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "IgrejaSocial.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/IgrejaSocial.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IgrejaSocial.Application.dll": {}
+        }
+      },
+      "IgrejaSocial.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/IgrejaSocial.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IgrejaSocial.Domain.dll": {}
+        }
+      },
+      "IgrejaSocial.Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "IgrejaSocial.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/IgrejaSocial.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IgrejaSocial.Infrastructure.dll": {}
+        }
       }
     }
   },
@@ -75,10 +111,27 @@
         "microsoft.openapi.2.0.0.nupkg.sha512",
         "microsoft.openapi.nuspec"
       ]
+    },
+    "IgrejaSocial.Application/1.0.0": {
+      "type": "project",
+      "path": "../IgrejaSocial.Application/IgrejaSocial.Application.csproj",
+      "msbuildProject": "../IgrejaSocial.Application/IgrejaSocial.Application.csproj"
+    },
+    "IgrejaSocial.Domain/1.0.0": {
+      "type": "project",
+      "path": "../IgrejaSocial.Domain/IgrejaSocial.Domain.csproj",
+      "msbuildProject": "../IgrejaSocial.Domain/IgrejaSocial.Domain.csproj"
+    },
+    "IgrejaSocial.Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../IgrejaSocial.Infrastructure/IgrejaSocial.Infrastructure.csproj",
+      "msbuildProject": "../IgrejaSocial.Infrastructure/IgrejaSocial.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "IgrejaSocial.Application >= 1.0.0",
+      "IgrejaSocial.Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.OpenApi >= 10.0.2"
     ]
   },
@@ -106,7 +159,14 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj": {
+              "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj"
+            },
+            "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "IgrejaSocial.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/IgrejaSocial.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/IgrejaSocial.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "IgrejaSocial.Domain/1.0.0": {
+      "type": "project",
+      "path": "../IgrejaSocial.Domain/IgrejaSocial.Domain.csproj",
+      "msbuildProject": "../IgrejaSocial.Domain/IgrejaSocial.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "IgrejaSocial.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Rui Francisco\\.nuget\\packages\\": {}
@@ -31,7 +50,11 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
+              "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
