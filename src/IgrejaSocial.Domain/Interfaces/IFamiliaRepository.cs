@@ -9,7 +9,7 @@ namespace IgrejaSocial.Domain.Interfaces
     {
         Task<Familia?> ObterPorIdAsync(Guid id);
         Task<Familia?> ObterPorCpfAsync(string cpf);
-        Task<IEnumerable<Familia>> ListarTodasAsync();
+        Task<IEnumerable<Familia>> ListarTodasAsync(); // O repositório deve implementar exatamente este nome
         Task<IEnumerable<Familia>> ListarVulneraveisAsync();
         Task<IEnumerable<Familia>> ListarPorBairroAsync(string bairro);
         Task AdicionarAsync(Familia familia);
