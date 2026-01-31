@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
-using IgrejaSocial.Domain.Entities; // Adicione este using para reconhecer a classe Familia
+using IgrejaSocial.Domain.Entities;
+using IgrejaSocial.Domain.Models; // Use o novo namespace do Domain
 
 namespace IgrejaSocial.Web.Services
 {
@@ -7,31 +8,22 @@ namespace IgrejaSocial.Web.Services
     {
         private readonly HttpClient _httpClient;
 
-        public FamiliaService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+        public FamiliaService(HttpClient httpClient) => _httpClient = httpClient;
 
         public async Task<List<Familia>> GetFamiliasAsync() 
         {
-            try 
-            {
-                return await _httpClient.GetFromJsonAsync<List<Familia>>("api/familia") ?? new();
-            }
-            catch
-            {
-                return new List<Familia>();
-            }
+            return await _httpClient.GetFromJsonAsync<List<Familia>>("api/familia") ?? new();
         }
-        public async Task<CepResponseDto> ConsultarCepAsync(string cep)
+
+        public async Task<CepResponse?> ConsultarCepAsync(string cep)
         {
-            // Remove caracteres especiais antes de enviar
             var cepLimpo = new string(cep.Where(char.IsDigit).ToArray());
             if (cepLimpo.Length != 8) return null;
 
             try 
             {
-                return await _httpClient.GetFromJsonAsync<CepResponseDto>($"api/cep/{cepLimpo}");
+                // A chamada vai para o seu Controller da API
+                return await _httpClient.GetFromJsonAsync<CepResponse>($"api/cep/{cepLimpo}");
             }
             catch
             {
