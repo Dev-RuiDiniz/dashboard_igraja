@@ -1,0 +1,75 @@
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Enums
+@inject FamiliaService FamiliaService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.PersonAdd" Class="mr-3 mb-n1" />
+            Nova Família
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@_success">
+            <MudGrid>
+                <MudItem xs="12" md="8">
+                    <MudTextField T="string" Label="Nome do Responsável" Required="true" 
+                                  @bind-Value="_familia.NomeResponsavel" For="@(() => _familia.NomeResponsavel)" />
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudTextField T="string" Label="CPF" Required="true" Mask="@(new PatternMask("000.000.000-00"))"
+                                  @bind-Value="_familia.CpfResponsavel" For="@(() => _familia.CpfResponsavel)" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Endereço Completo" Required="true"
+                                  @bind-Value="_familia.Endereco" For="@(() => _familia.Endereco)" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField T="decimal" Label="Renda Familiar Total" Format="C2"
+                                     @bind-Value="_familia.RendaFamiliarTotal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Label="Telefone" Mask="@(new PatternMask("(00) 00000-0000"))"
+                                  @bind-Value="_familia.TelefoneContato" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect T="TipoResidencia" Label="Tipo de Residência" @bind-Value="_familia.Residencia">
+                        @foreach (TipoResidencia item in Enum.GetValues(typeof(TipoResidencia)))
+                        {
+                            <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Observações" Lines="3" @bind-Value="_familia.Observacoes" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Disabled="@(!_success)" OnClick="Submit">Salvar Família</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    
+    private MudForm form;
+    private bool _success;
+    private Familia _familia = new();
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Submit()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            // Aqui chamaremos o método de POST no seu FamiliaService futuramente
+            Snackbar.Add("Família cadastrada com sucesso!", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(_familia));
+        }
+    }
+}
