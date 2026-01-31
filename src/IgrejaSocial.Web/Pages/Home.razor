@@ -1,7 +1,54 @@
 ﻿@page "/"
+@inject IDashboardService DashboardService
 
-<PageTitle>Home</PageTitle>
+<MudText Typo="Typo.h4" Class="mb-6">Painel de Controle</MudText>
 
-<h1>Hello, world!</h1>
+<MudGrid>
+    @* Card: Famílias Atendidas *@
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-primary);">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1">Famílias Atendidas</MudText>
+                    <MudText Typo="Typo.h4">@_stats.TotalFamilias</MudText>
+                </MudStack>
+            </MudStack>
+        </MudCard>
+    </MudItem>
 
-Welcome to your new app.
+    @* Card: Equipamentos Disponíveis *@
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-success);">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.WheelchairPickup" Color="Color.Success" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1">Itens Disponíveis</MudText>
+                    <MudText Typo="Typo.h4">@_stats.EquipamentosDisponiveis</MudText>
+                </MudStack>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+
+    @* Card: Alertas de Atenção (Vulnerabilidade) *@
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-error);">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1">Famílias em Risco</MudText>
+                    <MudText Typo="Typo.h4">@_stats.FamiliasVulneraveis</MudText>
+                </MudStack>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DashboardStatsDto _stats = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _stats = await DashboardService.GetResumoAsync();
+    }
+}
