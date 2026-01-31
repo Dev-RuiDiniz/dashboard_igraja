@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using IgrejaSocial.Web.Models;
+using IgrejaSocial.Domain.Models; // Puxando do seu projeto Domain
 
 namespace IgrejaSocial.Web.Services
 {
@@ -16,12 +16,14 @@ namespace IgrejaSocial.Web.Services
         {
             try 
             {
-                return await _httpClient.GetFromJsonAsync<DashboardStatsDto>("api/dashboard/resumo") 
-                       ?? new DashboardStatsDto();
+                // Chama o endpoint que criaremos na API
+                var response = await _httpClient.GetFromJsonAsync<DashboardStatsDto>("api/dashboard/resumo");
+                return response ?? new DashboardStatsDto();
             }
-            catch
+            catch (Exception)
             {
-                return new DashboardStatsDto(); // Retorna zerado em caso de erro na API
+                // Em caso de erro (API offline, etc), retorna valores zerados para não quebrar a UI
+                return new DashboardStatsDto();
             }
         }
     }
