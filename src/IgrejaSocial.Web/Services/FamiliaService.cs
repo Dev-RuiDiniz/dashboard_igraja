@@ -23,5 +23,20 @@ namespace IgrejaSocial.Web.Services
                 return new List<Familia>();
             }
         }
+        public async Task<CepResponseDto> ConsultarCepAsync(string cep)
+        {
+            // Remove caracteres especiais antes de enviar
+            var cepLimpo = new string(cep.Where(char.IsDigit).ToArray());
+            if (cepLimpo.Length != 8) return null;
+
+            try 
+            {
+                return await _httpClient.GetFromJsonAsync<CepResponseDto>($"api/cep/{cepLimpo}");
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

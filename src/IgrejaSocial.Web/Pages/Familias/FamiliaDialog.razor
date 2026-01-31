@@ -1,5 +1,6 @@
 @using IgrejaSocial.Domain.Entities
 @using IgrejaSocial.Domain.Enums
+@using IgrejaSocial.Domain.DTOs
 @inject FamiliaService FamiliaService
 @inject ISnackbar Snackbar
 
@@ -11,10 +12,9 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        @* @bind-IsValid vincula o estado de validacao do formulario a variavel _success *@
         <MudForm @ref="form" @bind-IsValid="@_success">
             <MudGrid>
-                @* Campo de Nome com validacao automatica baseada nos DataAnnotations da Entity *@
+                @* Nome e CPF *@
                 <MudItem xs="12" md="8">
                     <MudTextField T="string" Label="Nome do Responsável" Required="true" 
                                   @bind-Value="_familia.NomeResponsavel" 
@@ -22,7 +22,6 @@
                                   Variant="Variant.Outlined" />
                 </MudItem>
 
-                @* Campo de CPF com Mascara de entrada brasileira *@
                 <MudItem xs="12" md="4">
                     <MudTextField T="string" Label="CPF" Required="true" 
                                   Mask="@(new PatternMask("000.000.000-00"))"
@@ -31,14 +30,27 @@
                                   Variant="Variant.Outlined" />
                 </MudItem>
 
-                <MudItem xs="12">
+                @* --- INTEGRAÇÃO VIACEP --- *@
+                @* Campo de CEP que dispara a busca automática *@
+                <MudItem xs="12" md="4">
+                    <MudTextField T="string" Label="CEP" 
+                                  @bind-Value="_cepBusca" 
+                                  Mask="@(new PatternMask("00000-000"))"
+                                  OnInternalInputChanged="OnCepChanged"
+                                  Adornment="Adornment.End" 
+                                  AdornmentIcon="@(_loadingCep ? Icons.Material.Filled.HourglassEmpty : Icons.Material.Filled.Map)"
+                                  Variant="Variant.Outlined" 
+                                  HelperText="Digite o CEP para preencher o endereço"/>
+                </MudItem>
+
+                <MudItem xs="12" md="8">
                     <MudTextField T="string" Label="Endereço Completo" Required="true"
                                   @bind-Value="_familia.Endereco" 
                                   For="@(() => _familia.Endereco)" 
                                   Variant="Variant.Outlined" />
                 </MudItem>
 
-                @* Campo numerico para moeda (Renda) *@
+                @* Renda e Telefone *@
                 <MudItem xs="12" md="6">
                     <MudNumericField T="decimal" Label="Renda Familiar Total" 
                                      Format="C2" Culture="@System.Globalization.CultureInfo.GetCultureInfo("pt-BR")"
@@ -46,7 +58,6 @@
                                      Variant="Variant.Outlined" />
                 </MudItem>
 
-                @* Telefone com mascara dinamica (aceita fixo ou celular) *@
                 <MudItem xs="12" md="6">
                     <MudTextField T="string" Label="Telefone" 
                                   Mask="@(new PatternMask("(00) 00000-0000"))"
@@ -54,7 +65,7 @@
                                   Variant="Variant.Outlined" />
                 </MudItem>
 
-                @* Select baseado no Enum TipoResidencia definido no Domain *@
+                @* Tipo de Residência e Observações *@
                 <MudItem xs="12" md="6">
                     <MudSelect T="TipoResidencia" Label="Tipo de Residência" 
                                @bind-Value="_familia.Residencia" 
@@ -76,9 +87,8 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancelar</MudButton>
-        @* O botao Salvar so habilita se o formulario estiver valido (_success) *@
         <MudButton Color="Color.Primary" Variant="Variant.Filled" 
-                   Disabled="@(!_success)" OnClick="Submit">Salvar Família</MudButton>
+                   Disabled="@(!_success || _loadingCep)" OnClick="Submit">Salvar Família</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -87,23 +97,51 @@
     
     private MudForm form;
     private bool _success;
-    private Familia _familia = new(); // Nova instancia da entidade para preenchimento
+    private bool _loadingCep;
+    private string _cepBusca;
+    private Familia _familia = new();
+
+    // Método disparado ao digitar no campo de CEP
+    private async Task OnCepChanged(string val)
+    {
+        _cepBusca = val;
+        // Remove a máscara para validar o tamanho
+        var somenteNumeros = new string(val.Where(char.IsDigit).ToArray());
+
+        if (somenteNumeros.Length == 8)
+        {
+            _loadingCep = true;
+            try 
+            {
+                // Chama o serviço que configuramos na Tarefa 7
+                var dadosCep = await FamiliaService.ConsultarCepAsync(somenteNumeros);
+                
+                if (dadosCep != null && !string.IsNullOrEmpty(dadosCep.Logradouro))
+                {
+                    // Preenche o endereço formatado
+                    _familia.Endereco = $"{dadosCep.Logradouro}, {dadosCep.Bairro} - {dadosCep.Localidade}/{dadosCep.Uf}";
+                    Snackbar.Add("Endereço preenchido via CEP!", Severity.Info);
+                }
+            }
+            finally 
+            {
+                _loadingCep = false;
+            }
+        }
+    }
 
     private void Cancel() => MudDialog.Cancel();
 
     private async Task Submit()
     {
-        // Forca a validacao de todos os campos antes de prosseguir
         await form.Validate();
 
         if (form.IsValid)
         {
             try 
             {
-                // Aqui no futuro adicionaremos: await FamiliaService.CreateAsync(_familia);
+                // Futuro: await FamiliaService.CreateAsync(_familia);
                 Snackbar.Add($"Família de {_familia.NomeResponsavel} salva com sucesso!", Severity.Success);
-                
-                // Fecha o modal retornando o objeto criado para atualizar a listagem
                 MudDialog.Close(DialogResult.Ok(_familia));
             }
             catch (Exception ex)
