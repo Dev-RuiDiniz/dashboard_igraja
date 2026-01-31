@@ -16,5 +16,6 @@ builder.Services.AddMudServices();
 
 // 3. Injeção de Dependência dos seus Serviços
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<FamiliaService>();
 
 await builder.Build().RunAsync();
