@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "qWQ9J0W35Y0=",
+  "dgSpecHash": "H4LPaHnV25o=",
   "success": true,
   "projectFilePath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
   "expectedPackageFiles": [
@@ -71,7 +71,7 @@
     {
       "code": "NU1608",
       "level": "Warning",
-      "message": "Versão detectada do pacote fora da restrição de dependência: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requer AutoMapper (= 12.0.1), mas a versão AutoMapper 16.0.0 foi resolvida.",
+      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 16.0.0 was resolved.",
       "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
       "warningLevel": 1,
       "filePath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",

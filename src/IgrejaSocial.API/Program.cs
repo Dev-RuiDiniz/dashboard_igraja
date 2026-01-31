@@ -2,28 +2,35 @@ using IgrejaSocial.Infrastructure.Data;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Infrastructure.ExternalServices;
 using IgrejaSocial.Infrastructure.Repositories;
-using IgrejaSocial.Application.Mappings;
 using IgrejaSocial.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. Configuração do Banco de Dados (SQLite) ---
+// --- 1. Configuração do CORS  ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlazorPolicy", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
+});
+
+// --- 2. Configuração do Banco de Dados (SQLite) ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// --- 2. Registro do Serviço de CEP ---
-// Agora o builder já existe, então podemos registrar o HttpClient
+// --- 3. Registro do Serviço de CEP ---
 builder.Services.AddHttpClient<ICepService, ViaCepService>(client =>
 {
     client.BaseAddress = new Uri("https://viacep.com.br/ws/");
 });
 
-// --- 3. Controladores e Serialização JSON ---
+// --- 4. Controladores e Serialização JSON ---
 builder.Services.AddControllers()
     .AddJsonOptions(options => 
     {
@@ -31,7 +38,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// --- 4. Swagger/OpenAPI ---
+// --- 5. Injeção de Dependência (Services e Repositories) ---
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<SocialAnalysisService>();
@@ -42,7 +49,11 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-// --- 5. Pipeline de Requisições HTTP ---
+// --- 6. Pipeline de Requisições HTTP (A ordem importa aqui!) ---
+
+// O middleware do CORS deve vir antes de MapControllers e HttpsRedirection
+app.UseCors("BlazorPolicy"); 
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
