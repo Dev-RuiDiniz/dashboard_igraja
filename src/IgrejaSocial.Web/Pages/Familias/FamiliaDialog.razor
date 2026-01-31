@@ -11,45 +11,74 @@
         </MudText>
     </TitleContent>
     <DialogContent>
+        @* @bind-IsValid vincula o estado de validacao do formulario a variavel _success *@
         <MudForm @ref="form" @bind-IsValid="@_success">
             <MudGrid>
+                @* Campo de Nome com validacao automatica baseada nos DataAnnotations da Entity *@
                 <MudItem xs="12" md="8">
                     <MudTextField T="string" Label="Nome do Responsável" Required="true" 
-                                  @bind-Value="_familia.NomeResponsavel" For="@(() => _familia.NomeResponsavel)" />
+                                  @bind-Value="_familia.NomeResponsavel" 
+                                  For="@(() => _familia.NomeResponsavel)" 
+                                  Variant="Variant.Outlined" />
                 </MudItem>
+
+                @* Campo de CPF com Mascara de entrada brasileira *@
                 <MudItem xs="12" md="4">
-                    <MudTextField T="string" Label="CPF" Required="true" Mask="@(new PatternMask("000.000.000-00"))"
-                                  @bind-Value="_familia.CpfResponsavel" For="@(() => _familia.CpfResponsavel)" />
+                    <MudTextField T="string" Label="CPF" Required="true" 
+                                  Mask="@(new PatternMask("000.000.000-00"))"
+                                  @bind-Value="_familia.CpfResponsavel" 
+                                  For="@(() => _familia.CpfResponsavel)" 
+                                  Variant="Variant.Outlined" />
                 </MudItem>
+
                 <MudItem xs="12">
                     <MudTextField T="string" Label="Endereço Completo" Required="true"
-                                  @bind-Value="_familia.Endereco" For="@(() => _familia.Endereco)" />
+                                  @bind-Value="_familia.Endereco" 
+                                  For="@(() => _familia.Endereco)" 
+                                  Variant="Variant.Outlined" />
                 </MudItem>
+
+                @* Campo numerico para moeda (Renda) *@
                 <MudItem xs="12" md="6">
-                    <MudNumericField T="decimal" Label="Renda Familiar Total" Format="C2"
-                                     @bind-Value="_familia.RendaFamiliarTotal" />
+                    <MudNumericField T="decimal" Label="Renda Familiar Total" 
+                                     Format="C2" Culture="@System.Globalization.CultureInfo.GetCultureInfo("pt-BR")"
+                                     @bind-Value="_familia.RendaFamiliarTotal" 
+                                     Variant="Variant.Outlined" />
                 </MudItem>
+
+                @* Telefone com mascara dinamica (aceita fixo ou celular) *@
                 <MudItem xs="12" md="6">
-                    <MudTextField T="string" Label="Telefone" Mask="@(new PatternMask("(00) 00000-0000"))"
-                                  @bind-Value="_familia.TelefoneContato" />
+                    <MudTextField T="string" Label="Telefone" 
+                                  Mask="@(new PatternMask("(00) 00000-0000"))"
+                                  @bind-Value="_familia.TelefoneContato" 
+                                  Variant="Variant.Outlined" />
                 </MudItem>
+
+                @* Select baseado no Enum TipoResidencia definido no Domain *@
                 <MudItem xs="12" md="6">
-                    <MudSelect T="TipoResidencia" Label="Tipo de Residência" @bind-Value="_familia.Residencia">
+                    <MudSelect T="TipoResidencia" Label="Tipo de Residência" 
+                               @bind-Value="_familia.Residencia" 
+                               Variant="Variant.Outlined">
                         @foreach (TipoResidencia item in Enum.GetValues(typeof(TipoResidencia)))
                         {
                             <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
+
                 <MudItem xs="12">
-                    <MudTextField T="string" Label="Observações" Lines="3" @bind-Value="_familia.Observacoes" />
+                    <MudTextField T="string" Label="Observações" Lines="3" 
+                                  @bind-Value="_familia.Observacoes" 
+                                  Variant="Variant.Outlined" />
                 </MudItem>
             </MudGrid>
         </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancelar</MudButton>
-        <MudButton Color="Color.Primary" Disabled="@(!_success)" OnClick="Submit">Salvar Família</MudButton>
+        @* O botao Salvar so habilita se o formulario estiver valido (_success) *@
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" 
+                   Disabled="@(!_success)" OnClick="Submit">Salvar Família</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -58,18 +87,29 @@
     
     private MudForm form;
     private bool _success;
-    private Familia _familia = new();
+    private Familia _familia = new(); // Nova instancia da entidade para preenchimento
 
     private void Cancel() => MudDialog.Cancel();
 
     private async Task Submit()
     {
+        // Forca a validacao de todos os campos antes de prosseguir
         await form.Validate();
+
         if (form.IsValid)
         {
-            // Aqui chamaremos o método de POST no seu FamiliaService futuramente
-            Snackbar.Add("Família cadastrada com sucesso!", Severity.Success);
-            MudDialog.Close(DialogResult.Ok(_familia));
+            try 
+            {
+                // Aqui no futuro adicionaremos: await FamiliaService.CreateAsync(_familia);
+                Snackbar.Add($"Família de {_familia.NomeResponsavel} salva com sucesso!", Severity.Success);
+                
+                // Fecha o modal retornando o objeto criado para atualizar a listagem
+                MudDialog.Close(DialogResult.Ok(_familia));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Erro ao salvar: " + ex.Message, Severity.Error);
+            }
         }
     }
 }

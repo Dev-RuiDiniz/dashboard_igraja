@@ -40,7 +40,11 @@
 
     <RowTemplate>
         <MudTd DataLabel="Responsável">@context.NomeResponsavel</MudTd>
-        <MudTd DataLabel="CPF">@context.CpfResponsavel</MudTd>
+        <MudTd DataLabel="CPF">
+            @(long.TryParse(context.CpfResponsavel, out var cpf) 
+                ? string.Format("{0:000\\.000\\.000-00}", cpf) 
+                : context.CpfResponsavel)
+        </MudTd>
         <MudTd DataLabel="Endereço">@context.Endereco</MudTd>
         <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
         <MudTd DataLabel="Status">
