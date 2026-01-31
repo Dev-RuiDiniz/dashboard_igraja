@@ -1,10 +1,12 @@
 @page "/familias"
+@using IgrejaSocial.Domain.Entities @* Adicione o namespace das suas Entidades *@
 @inject FamiliaService FamiliaService
 @inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h4" Class="mb-4">Gerenciamento de Famílias</MudText>
 
-<MudTable Items="@_familias" Hover="true" Bordered="false" Striped="true" Filter="new Func<Familia,bool>(FilterFunc1)">
+@* Note o T="Familia" adicionado à MudTable *@
+<MudTable Items="@_familias" Hover="true" Striped="true" Filter="new Func<Familia,bool>(FilterFunc1)" T="Familia">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Famílias Cadastradas</MudText>
         <MudSpacer />
@@ -24,15 +26,17 @@
         <MudTd DataLabel="Nome">@context.NomeResponsavel</MudTd>
         <MudTd DataLabel="CPF">@context.Cpf</MudTd>
         <MudTd DataLabel="Bairro">@context.Bairro</MudTd>
-        <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
+        <MudTd DataLabel="Renda">@context.RendaFamiliarTotal.ToString("C")</MudTd>
         <MudTd DataLabel="Status">
             @if (context.IsVulneravel)
             {
-                <MudChip Color="Color.Error" Size="Size.Small">Vulnerável</MudChip>
+                @* CORREÇÃO RZ10001: Adicionado T="string" *@
+                <MudChip T="string" Color="Color.Error" Size="Size.Small">Vulnerável</MudChip>
             }
             else
             {
-                <MudChip Color="Color.Success" Size="Size.Small">Estável</MudChip>
+                @* CORREÇÃO RZ10001: Adicionado T="string" *@
+                <MudChip T="string" Color="Color.Success" Size="Size.Small">Estável</MudChip>
             }
         </MudTd>
         <MudTd>
@@ -51,7 +55,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _familias = await FamiliaService.GetFamiliasAsync();
+        // Certifique-se que o FamiliaService retorna List<Familia>
+        var resultado = await FamiliaService.GetFamiliasAsync();
+        _familias = resultado ?? new List<Familia>();
     }
 
     private bool FilterFunc1(Familia familia) => FilterFunc(familia, _searchString);
@@ -59,9 +65,9 @@
     private bool FilterFunc(Familia familia, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString)) return true;
-        if (familia.NomeResponsavel.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
-        if (familia.Cpf.Contains(searchString)) return true;
-        if (familia.Bairro.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (familia.NomeResponsavel?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false) return true;
+        if (familia.Cpf?.Contains(searchString) ?? false) return true;
+        if (familia.Bairro?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false) return true;
         return false;
     }
 }
