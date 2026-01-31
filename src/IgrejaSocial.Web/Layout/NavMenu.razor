@@ -1,39 +1,27 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">IgrejaSocial.Web</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<MudNavMenu>
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">PRINCIPAL</MudText>
+    
+    <MudNavLink href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
+        Dashboard
+    </MudNavLink>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">CADASTROS</MudText>
 
-@code {
-    private bool collapseNavMenu = true;
+    <MudNavLink href="/familias" Icon="@Icons.Material.Filled.People">
+        Famílias
+    </MudNavLink>
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    <MudNavLink href="/equipamentos" Icon="@Icons.Material.Filled.HomeRepairService">
+        Equipamentos
+    </MudNavLink>
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">AÇÕES</MudText>
+
+    <MudNavLink href="/beneficios" Icon="@Icons.Material.Filled.CardGiftcard">
+        Cestas Básicas
+    </MudNavLink>
+
+    <MudNavLink href="/emprestimos" Icon="@Icons.Material.Filled.Handshake">
+        Empréstimos
+    </MudNavLink>
+</MudNavMenu>
