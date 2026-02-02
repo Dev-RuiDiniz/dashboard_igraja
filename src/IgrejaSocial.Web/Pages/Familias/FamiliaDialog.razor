@@ -1,7 +1,9 @@
+@using MudBlazor
+@using MudBlazor.Services
 @using IgrejaSocial.Domain.Entities
 @using IgrejaSocial.Domain.Enums
 @using IgrejaSocial.Domain.Models
-@using MudBlazor
+
 @inject FamiliaService FamiliaService
 @inject ISnackbar Snackbar
 
@@ -9,7 +11,7 @@
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.GroupAdd" Class="mr-3 mb-n1" />
-            Cadastro de Família e Membros
+            Cadastro de Família
         </MudText>
     </TitleContent>
     <DialogContent>
@@ -20,15 +22,15 @@
                 <MudTabPanel Text="Responsável">
                     <MudGrid>
                         <MudItem xs="12" md="8">
-                            <MudTextField T="string" Label="Nome do Responsável" Required="true" 
+                            <MudTextField T="string" Label="Nome" Required="true" 
                                           @bind-Value="_familia.NomeResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudTextField T="string" Label="CPF" Mask="@(new PatternMask("000.000.000-00"))"
+                            <MudTextField T="string" Label="CPF" Mask="@(new PatternMask("000.000.000-00"))" 
                                           @bind-Value="_familia.CpfResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudTextField T="string" Label="CEP" @bind-Value="_cepBusca" TextChanged="OnCepChanged"
+                            <MudTextField T="string" Label="CEP" @bind-Value="_cepBusca" TextChanged="OnCepChanged" 
                                           Mask="@(new PatternMask("00000-000"))" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="8">
@@ -37,104 +39,119 @@
                     </MudGrid>
                 </MudTabPanel>
 
-                @* ABA 2: GESTÃO DINÂMICA DE MEMBROS *@
-                <MudTabPanel Text="Dependentes/Membros">
-                    <div class="d-flex flex-column gap-4">
-                        <MudText Typo="Typo.subtitle2">Adicionar Novo Membro</MudText>
-                        <MudPaper Class="pa-4 mb-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
-                            <MudGrid>
-                                <MudItem xs="12" md="5">
-                                    <MudTextField T="string" Label="Nome do Membro" @bind-Value="_novoMembro.Nome" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                </MudItem>
-                                <MudItem xs="12" md="4">
-                                    <MudTextField T="string" Label="Parentesco" @bind-Value="_novoMembro.Parentesco" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                                </MudItem>
-                                <MudItem xs="12" md="3">
-                                    <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" 
-                                               Variant="Variant.Filled" OnClick="AdicionarMembro" FullWidth Class="mt-1">
-                                        Inserir
-                                    </MudButton>
-                                </MudItem>
-                            </MudGrid>
-                        </MudPaper>
+                @* ABA 2: MEMBROS E DEPENDENTES *@
+                <MudTabPanel Text="Membros">
+                    <MudPaper Class="pa-4 mb-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
+                        <MudGrid>
+                            <MudItem xs="12" md="5">
+                                <MudTextField T="string" Label="Nome" @bind-Value="_novoMembro.Nome" 
+                                              Variant="Variant.Outlined" Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" md="4">
+                                <MudSelect T="TipoParentesco" Label="Parentesco" @bind-Value="_novoMembro.Parentesco" 
+                                           Variant="Variant.Outlined" Margin="Margin.Dense">
+                                    @foreach (TipoParentesco item in Enum.GetValues(typeof(TipoParentesco)))
+                                    {
+                                        @* Filtramos o Responsável, pois ele já é o titular da família *@
+                                        if (item != TipoParentesco.Responsavel)
+                                        {
+                                            <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12" md="3">
+                                <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" 
+                                           Variant="Variant.Filled" OnClick="AdicionarMembro" FullWidth Class="mt-1">
+                                    Adicionar
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudPaper>
 
-                        <MudTable Items="@_familia.Membros" Hover="true" Dense="true" Elevation="0">
-                            <HeaderContent>
-                                <MudTh>Nome</MudTh>
-                                <MudTh>Parentesco</MudTh>
-                                <MudTh Style="width: 50px"></MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd>@context.Nome</MudTd>
-                                <MudTd>@context.Parentesco</MudTd>
-                                <MudTd>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" 
-                                                   Size="Size.Small" OnClick="@(() => RemoverMembro(context))" />
-                                </MudTd>
-                            </RowTemplate>
-                            <NoItemsContent>
-                                <MudText Align="Align.Center" Class="pa-4">Nenhum dependente adicionado ainda.</MudText>
-                            </NoItemsContent>
-                        </MudTable>
-                    </div>
+                    <MudTable Items="@_familia.Membros" Hover="true" Dense="true" Elevation="0">
+                        <HeaderContent>
+                            <MudTh>Nome</MudTh>
+                            <MudTh>Parentesco</MudTh>
+                            <MudTh></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Nome">@context.Nome</MudTd>
+                            <MudTd DataLabel="Parentesco">@context.Parentesco</MudTd>
+                            <MudTd>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" 
+                                               Size="Size.Small" OnClick="@(() => RemoverMembro(context))" />
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Align="Align.Center" Class="pa-4">Nenhum membro adicionado ainda.</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
                 </MudTabPanel>
             </MudTabs>
         </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancelar</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="@(!_success)" OnClick="Submit">Salvar Cadastro</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" 
+                   Disabled="@(!_success)" OnClick="Submit">Salvar Família</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter] public MudDialogInstance? MudDialog { get; set; }
+    @* CascadingParameter para gerenciar a instância do Modal *@
+    [CascadingParameter] 
+    public MudDialogInstance? MudDialog { get; set; }
+
     private MudForm? form;
     private bool _success;
-    private string _cepBusca = string.Empty;
     private bool _loadingCep;
-
+    private string _cepBusca = string.Empty;
     private Familia _familia = new() { Membros = new List<MembroFamilia>() };
     private MembroFamilia _novoMembro = new();
 
-    private void AdicionarMembro()
-    {
-        if (!string.IsNullOrWhiteSpace(_novoMembro.Nome))
-        {
+    @* Gerencia a adição de membros à lista temporária *@
+    private void AdicionarMembro() {
+        if (!string.IsNullOrWhiteSpace(_novoMembro.Nome)) {
             _familia.Membros.Add(new MembroFamilia { 
                 Nome = _novoMembro.Nome, 
                 Parentesco = _novoMembro.Parentesco 
             });
-            _novoMembro = new MembroFamilia(); // Reseta o form de inserção
-            Snackbar.Add("Membro adicionado à lista.", Severity.Info);
+            _novoMembro = new MembroFamilia(); // Limpa o campo para o próximo membro
+            Snackbar.Add("Membro adicionado.", Severity.Info);
         }
     }
 
     private void RemoverMembro(MembroFamilia membro) => _familia.Membros.Remove(membro);
 
+    @* Consulta de CEP integrada ao serviço de infraestrutura *@
     private async Task OnCepChanged(string val)
+{
+    // A máscara 00000-000 resulta em 9 caracteres
+    if (val?.Length == 9) 
     {
-        var somenteNumeros = new string(val.Where(char.IsDigit).ToArray());
-        if (somenteNumeros.Length == 8)
+        _loadingCep = true;
+        try 
         {
-            _loadingCep = true;
-            var dados = await FamiliaService.ConsultarCepAsync(somenteNumeros);
-            if (dados is not null)
+            // O serviço retorna o CepResponse localizado em Domain.Models
+            var dados = await FamiliaService.ConsultarCepAsync(val);
+            
+            if (dados != null && !string.IsNullOrEmpty(dados.Logradouro))
             {
+                // Preenchimento automático solicitado na Tarefa 7
                 _familia.Endereco = $"{dados.Logradouro}, {dados.Bairro} - {dados.Localidade}/{dados.Uf}";
+                Snackbar.Add("Endereço localizado!", Severity.Success);
             }
-            _loadingCep = false;
         }
+        finally { _loadingCep = false; }
     }
+}
 
     private void Cancel() => MudDialog?.Cancel();
 
-    private async Task Submit()
-    {
+    private async Task Submit() {
         if (form is not null) await form.Validate();
-        if (form?.IsValid == true)
-        {
-            // O objeto _familia já contém a lista de Membros integrada
+        if (form?.IsValid == true) {
             MudDialog?.Close(DialogResult.Ok(_familia));
         }
     }

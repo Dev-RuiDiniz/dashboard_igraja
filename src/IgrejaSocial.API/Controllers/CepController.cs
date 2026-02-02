@@ -1,5 +1,6 @@
 using IgrejaSocial.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using IgrejaSocial.Domain.Models;
 
 namespace IgrejaSocial.API.Controllers
 {

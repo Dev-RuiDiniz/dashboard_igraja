@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using IgrejaSocial.Domain.Enums;
 using IgrejaSocial.Domain.Validations;
 
@@ -14,11 +15,11 @@ namespace IgrejaSocial.Domain.Entities
 
         [Required(ErrorMessage = "O nome do responsável é obrigatório.")]
         [StringLength(150, MinimumLength = 3, ErrorMessage = "O nome deve ter entre 3 e 150 caracteres.")]
-        public string NomeResponsavel { get; set; }
+        public string NomeResponsavel { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
         [Cpf]
-        public string CpfResponsavel { get; set; }
+        public string CpfResponsavel { get; set; } = string.Empty;
 
         [Required]
         public TipoResidencia Residencia { get; set; }
@@ -31,26 +32,29 @@ namespace IgrejaSocial.Domain.Entities
 
         [Required(ErrorMessage = "O endereço é obrigatório.")]
         [StringLength(255)]
-        public string Endereco { get; set; }
+        public string Endereco { get; set; } = string.Empty;
 
         [Phone(ErrorMessage = "Telefone em formato inválido.")]
-        public string TelefoneContato { get; set; }
+        public string? TelefoneContato { get; set; } // Opcional
 
         public decimal RendaFamiliarTotal { get; set; }
 
-        public string Observacoes { get; set; }
+        public string? Observacoes { get; set; } // Opcional
 
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
-        // Logística de Negócio Corrigida: Soma a renda de todos os membros para a média per capita
+        [JsonIgnore] // Calculado, não enviado no JSON
         public int TotalIntegrantes => Membros.Count + 1;
 
+        [JsonIgnore] // Calculado
         public decimal RendaPerCapita => TotalIntegrantes > 0 
             ? (RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual)) / TotalIntegrantes 
             : 0;
 
+        [JsonIgnore] // Calculado
         public bool IsVulneravel => RendaPerCapita < 660.00m;
 
+        [JsonIgnore] // Calculado
         public bool PossuiCriancas => Membros.Any(m => m.Idade < 12);
     }
 }
