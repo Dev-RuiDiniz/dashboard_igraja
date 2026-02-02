@@ -43,18 +43,14 @@ namespace IgrejaSocial.Domain.Entities
 
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
-        [JsonIgnore] // Calculado, não enviado no JSON
         public int TotalIntegrantes => Membros.Count + 1;
 
-        [JsonIgnore] // Calculado
         public decimal RendaPerCapita => TotalIntegrantes > 0 
             ? (RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual)) / TotalIntegrantes 
             : 0;
 
-        [JsonIgnore] // Calculado
         public bool IsVulneravel => RendaPerCapita < 660.00m;
 
-        [JsonIgnore] // Calculado
         public bool PossuiCriancas => Membros.Any(m => m.Idade < 12);
     }
 }
