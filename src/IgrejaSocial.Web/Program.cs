@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Http;
 using IgrejaSocial.Web;
 using MudBlazor.Services;
 using IgrejaSocial.Web.Services; // Adicione esta linha para resolver o erro CS0246

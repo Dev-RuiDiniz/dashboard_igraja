@@ -12,9 +12,9 @@
             <MudDatePicker Label="Data real da devolução"
                            @bind-Date="_dataDevolucao"
                            MaxDate="@DateTime.Today"
-                           Dense="true"
+                           Margin="Margin.Dense"
                            Required="true"
-                           Validation="ValidarDataDevolucao" />
+                           Validation="@(new Func<DateTime?, string?>(ValidarDataDevolucao))" />
 
             <MudSelect T="StatusEquipamento" Label="Estado de conservação" @bind-Value="_estadoConservacao" Dense="true">
                 @foreach (var opcao in _estadosConservacao)

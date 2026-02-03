@@ -68,7 +68,7 @@
                                           Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudSwitch Label="Documentação apresentada" Color="Color.Primary"
+                            <MudSwitch T="bool" Label="Documentação apresentada" Color="Color.Primary"
                                        @bind-Checked="_familia.DocumentacaoApresentada" Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
@@ -182,10 +182,10 @@
                     <MudPaper Class="pa-3 mb-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
                         <MudText Typo="Typo.subtitle2">Composição de dependentes</MudText>
                         <MudStack Row="true" Spacing="2">
-                            <MudChip Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">
+                            <MudChip T="string" Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">
                                 Adultos: @_familia.TotalAdultosDependentes
                             </MudChip>
-                            <MudChip Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
+                            <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
                                 Crianças: @_familia.TotalCriancasDependentes
                             </MudChip>
                         </MudStack>
