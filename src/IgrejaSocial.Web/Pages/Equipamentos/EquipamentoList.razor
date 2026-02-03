@@ -1,0 +1,139 @@
+@page "/equipamentos"
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Enums
+@inject EquipamentoService EquipamentoService
+@inject IDialogService DialogService
+
+<MudText Typo="Typo.h4" Class="mb-4">Inventário de Equipamentos</MudText>
+
+<MudTable Items="@_equipamentos" Hover="true" Striped="true" Filter="new Func<Equipamento,bool>(FilterFunc)" T="Equipamento" Elevation="2">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Equipamentos cadastrados</MudText>
+        <MudSpacer />
+
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudSelect T="TipoEquipamento?" Label="Tipo" Dense="true" @bind-Value="_tipoFiltro">
+                <MudSelectItem T="TipoEquipamento?" Value="null">Todos</MudSelectItem>
+                @foreach (var tipo in _tipos)
+                {
+                    <MudSelectItem T="TipoEquipamento?" Value="@tipo">@tipo.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="string" Label="Status" Dense="true" @bind-Value="_statusFiltro">
+                @foreach (var status in _statusDisponibilidade)
+                {
+                    <MudSelectItem Value="@status">@status</MudSelectItem>
+                }
+            </MudSelect>
+        </MudStack>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Código</MudTh>
+        <MudTh>Tipo</MudTh>
+        <MudTh>Descrição</MudTh>
+        <MudTh>Estado</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Ações</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Código">@context.CodigoPatrimonio</MudTd>
+        <MudTd DataLabel="Tipo">@context.Tipo</MudTd>
+        <MudTd DataLabel="Descrição">@context.Descricao</MudTd>
+        <MudTd DataLabel="Estado">@context.Estado</MudTd>
+        <MudTd DataLabel="Status">
+            <MudChip T="string" Size="Size.Small" Color="@GetStatusColor(context)" Variant="Variant.Text">
+                @GetStatusLabel(context)
+            </MudChip>
+        </MudTd>
+        <MudTd>
+            @if (context.IsDisponivel && context.Estado != StatusEquipamento.NecessitaManutencao)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="() => AbrirEmprestimoDialog(context)">
+                    Emprestar
+                </MudButton>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Indisponível</MudText>
+            }
+        </MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudTablePager InfoFormat="Exibindo {first_item}-{last_item} de {all_items}" RowsPerPageString="Linhas por página:" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private List<Equipamento> _equipamentos = new();
+    private readonly List<TipoEquipamento> _tipos = Enum.GetValues<TipoEquipamento>().ToList();
+    private readonly List<string> _statusDisponibilidade = new() { "Todos", "Disponível", "Emprestado", "Em Manutenção" };
+    private TipoEquipamento? _tipoFiltro;
+    private string _statusFiltro = "Todos";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarEquipamentosAsync();
+    }
+
+    private async Task CarregarEquipamentosAsync()
+    {
+        _equipamentos = await EquipamentoService.GetEquipamentosAsync();
+    }
+
+    private bool FilterFunc(Equipamento equipamento)
+    {
+        if (_tipoFiltro.HasValue && equipamento.Tipo != _tipoFiltro.Value)
+        {
+            return false;
+        }
+
+        if (_statusFiltro != "Todos" &&
+            !string.Equals(GetStatusLabel(equipamento), _statusFiltro, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static string GetStatusLabel(Equipamento equipamento)
+    {
+        if (equipamento.Estado == StatusEquipamento.NecessitaManutencao)
+        {
+            return "Em Manutenção";
+        }
+
+        return equipamento.IsDisponivel ? "Disponível" : "Emprestado";
+    }
+
+    private static Color GetStatusColor(Equipamento equipamento)
+    {
+        if (equipamento.Estado == StatusEquipamento.NecessitaManutencao)
+        {
+            return Color.Warning;
+        }
+
+        return equipamento.IsDisponivel ? Color.Success : Color.Info;
+    }
+
+    private async Task AbrirEmprestimoDialog(Equipamento equipamento)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters
+        {
+            { "EquipamentoPreSelecionado", equipamento }
+        };
+
+        var dialog = await DialogService.ShowAsync<EmprestimoDialog>("Registrar Empréstimo", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await CarregarEquipamentosAsync();
+        }
+    }
+}
