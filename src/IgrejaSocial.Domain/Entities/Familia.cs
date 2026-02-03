@@ -24,6 +24,8 @@ namespace IgrejaSocial.Domain.Entities
         [StringLength(20, ErrorMessage = "O RG deve ter no máximo 20 caracteres.")]
         public string? RgResponsavel { get; set; }
 
+        public bool DocumentacaoApresentada { get; set; } = true;
+
         [Required]
         public TipoMoradia Residencia { get; set; }
 
@@ -43,6 +45,10 @@ namespace IgrejaSocial.Domain.Entities
         [Phone(ErrorMessage = "Telefone em formato inválido.")]
         public string? TelefoneContato { get; set; } // Opcional
 
+        public decimal? Latitude { get; set; }
+
+        public decimal? Longitude { get; set; }
+
         public decimal RendaFamiliarTotal { get; set; }
 
         public string? Observacoes { get; set; } // Opcional
@@ -50,6 +56,10 @@ namespace IgrejaSocial.Domain.Entities
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
         public int TotalIntegrantes => Membros.Count + 1;
+
+        public int TotalCriancasDependentes => Membros.Count(m => m.Idade < 12);
+
+        public int TotalAdultosDependentes => Membros.Count(m => m.Idade >= 12);
 
         public int? IdadeResponsavel => DataNascimentoResponsavel.HasValue
             ? DateTime.Today.Year - DataNascimentoResponsavel.Value.Year -

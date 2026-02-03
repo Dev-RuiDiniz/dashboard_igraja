@@ -26,6 +26,8 @@ namespace IgrejaSocial.Infrastructure.Data
                 entity.Property(f => f.NomeResponsavel).IsRequired().HasMaxLength(150);
                 entity.Property(f => f.Endereco).IsRequired().HasMaxLength(255);
                 entity.Property(f => f.RendaFamiliarTotal).HasPrecision(18, 2);
+                entity.Property(f => f.Latitude).HasPrecision(9, 6);
+                entity.Property(f => f.Longitude).HasPrecision(9, 6);
 
                 entity.HasMany(f => f.Membros)
                       .WithOne(m => m.Familia)
@@ -56,6 +58,7 @@ namespace IgrejaSocial.Infrastructure.Data
             {
                 entity.HasKey(r => r.Id);
                 entity.Property(r => r.Observacoes).HasMaxLength(500);
+                entity.Property(r => r.TipoAtendimento).IsRequired();
 
                 entity.HasOne(r => r.Familia)
                     .WithMany()
@@ -65,6 +68,7 @@ namespace IgrejaSocial.Infrastructure.Data
                 entity.HasOne(r => r.Equipamento)
                     .WithMany()
                     .HasForeignKey(r => r.EquipamentoId)
+                    .IsRequired(false)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -108,6 +112,7 @@ namespace IgrejaSocial.Infrastructure.Data
                     Id = familiaId,
                     NomeResponsavel = "João da Silva (Teste Seed)",
                     CpfResponsavel = "12345678901",
+                    DocumentacaoApresentada = true,
                     Residencia = TipoMoradia.Alugada,
                     Status = StatusAcompanhamento.Ativo,
                     Endereco = "Rua das Oliveiras, 50 - Bairro Solidariedade",

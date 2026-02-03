@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IDashboardService DashboardService
+@inject RelatorioService RelatorioService
 
 <MudText Typo="Typo.h4" Class="mb-6">Painel de Controle</MudText>
 
@@ -57,11 +58,118 @@
     </MudItem>
 </MudGrid>
 
+<MudGrid Class="mt-6">
+    <MudItem xs="12" md="6">
+        <MudCard Elevation="2" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Famílias em Atenção</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Sem cesta há mais de 2 meses.
+                </MudText>
+                <MudTable Items="@_familiasAtencao" Dense="true" Hover="true" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Responsável</MudTh>
+                        <MudTh>Última Cesta</MudTh>
+                        <MudTh>Dependentes</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Responsável">@context.NomeResponsavel</MudTd>
+                        <MudTd DataLabel="Última Cesta">
+                            @(context.UltimaEntregaCesta.HasValue 
+                                ? context.UltimaEntregaCesta.Value.ToString("dd/MM/yyyy") 
+                                : "Sem registro")
+                        </MudTd>
+                        <MudTd DataLabel="Dependentes">@context.TotalDependentes</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">Nenhuma família em atenção no momento.</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudCard Elevation="2" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Ranking de Vulnerabilidade</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Renda per capita vs. dependentes.
+                </MudText>
+                <MudTable Items="@_rankingVulnerabilidade" Dense="true" Hover="true" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Responsável</MudTh>
+                        <MudTh>Renda Per Capita</MudTh>
+                        <MudTh>Dependentes</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Responsável">@context.NomeResponsavel</MudTd>
+                        <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
+                        <MudTd DataLabel="Dependentes">@context.TotalDependentes</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">Nenhuma família cadastrada.</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<MudGrid Class="mt-6">
+    <MudItem xs="12">
+        <MudCard Elevation="2" Class="pa-4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <MudStack Spacing="1">
+                    <MudText Typo="Typo.h6">Relatório Mensal</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        @_relatorio.Mes.ToString("D2")/@_relatorio.Ano
+                    </MudText>
+                </MudStack>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
+                           OnClick="DownloadCestasAtendidas">
+                    Exportar atendimentos do mês
+                </MudButton>
+            </MudStack>
+
+            <MudDivider Class="my-3" />
+
+            <MudGrid>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Class="pa-3" Elevation="0" Style="background-color: var(--mud-palette-background-grey);">
+                        <MudText Typo="Typo.subtitle2">Cestas entregues</MudText>
+                        <MudText Typo="Typo.h5">@_relatorio.TotalCestasEntregues</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Class="pa-3" Elevation="0" Style="background-color: var(--mud-palette-background-grey);">
+                        <MudText Typo="Typo.subtitle2">Equipamentos emprestados</MudText>
+                        <MudText Typo="Typo.h5">@_relatorio.TotalEquipamentosEmprestados</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
 @code {
     private DashboardStatsDto _stats = new();
+    private List<FamiliaAtencaoDto> _familiasAtencao = new();
+    private List<RankingVulnerabilidadeDto> _rankingVulnerabilidade = new();
+    private RelatorioMensalDto _relatorio = new();
 
     protected override async Task OnInitializedAsync()
     {
         _stats = await DashboardService.GetResumoAsync();
+        _familiasAtencao = await DashboardService.GetFamiliasAtencaoAsync();
+        _rankingVulnerabilidade = await DashboardService.GetRankingVulnerabilidadeAsync(5);
+        var hoje = DateTime.Today;
+        _relatorio = await RelatorioService.GetRelatorioMensalAsync(hoje.Month, hoje.Year);
+    }
+
+    private async Task DownloadCestasAtendidas()
+    {
+        var hoje = DateTime.Today;
+        await RelatorioService.DownloadCestasAtendidasCsvAsync(hoje.Month, hoje.Year);
     }
 }

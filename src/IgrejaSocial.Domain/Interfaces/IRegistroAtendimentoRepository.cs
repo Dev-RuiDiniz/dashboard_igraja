@@ -11,6 +11,7 @@ namespace IgrejaSocial.Domain.Interfaces
         Task AdicionarAsync(RegistroAtendimento registro);
         Task<RegistroAtendimento?> ObterAtivoPorEquipamentoAsync(Guid equipamentoId);
         Task<bool> ExisteEmprestimoAtivoPorFamiliaETipoAsync(Guid familiaId, TipoEquipamento tipo);
+        Task<bool> ExisteCestaBasicaNoMesAsync(Guid familiaId, int mes, int ano);
         Task<List<RegistroAtendimento>> ListarPorFamiliaAsync(Guid familiaId);
         Task SalvarAlteracoesAsync();
     }

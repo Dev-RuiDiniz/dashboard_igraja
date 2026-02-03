@@ -26,5 +26,32 @@ namespace IgrejaSocial.Web.Services
                 return new DashboardStatsDto();
             }
         }
+
+        public async Task<List<FamiliaAtencaoDto>> GetFamiliasAtencaoAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<FamiliaAtencaoDto>>("api/dashboard/atencao");
+                return response ?? new List<FamiliaAtencaoDto>();
+            }
+            catch
+            {
+                return new List<FamiliaAtencaoDto>();
+            }
+        }
+
+        public async Task<List<RankingVulnerabilidadeDto>> GetRankingVulnerabilidadeAsync(int limite)
+        {
+            try
+            {
+                var response = await _httpClient
+                    .GetFromJsonAsync<List<RankingVulnerabilidadeDto>>($"api/dashboard/ranking-vulnerabilidade?limite={limite}");
+                return response ?? new List<RankingVulnerabilidadeDto>();
+            }
+            catch
+            {
+                return new List<RankingVulnerabilidadeDto>();
+            }
+        }
     }
 }

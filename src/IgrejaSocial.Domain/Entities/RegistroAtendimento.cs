@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using IgrejaSocial.Domain.Enums;
 
 namespace IgrejaSocial.Domain.Entities
 {
@@ -13,18 +14,22 @@ namespace IgrejaSocial.Domain.Entities
 
         public Familia? Familia { get; set; }
 
-        [Required]
-        public Guid EquipamentoId { get; set; }
+        public Guid? EquipamentoId { get; set; }
 
         public Equipamento? Equipamento { get; set; }
+
+        [Required]
+        public TipoAtendimento TipoAtendimento { get; set; } = TipoAtendimento.EmprestimoEquipamento;
+
+        [DataType(DataType.Date)]
+        public DateTime? DataEntrega { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
         public DateTime DataEmprestimo { get; set; } = DateTime.Now;
 
-        [Required]
         [DataType(DataType.Date)]
-        public DateTime DataPrevistaDevolucao { get; set; }
+        public DateTime? DataPrevistaDevolucao { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? DataDevolucaoReal { get; set; }

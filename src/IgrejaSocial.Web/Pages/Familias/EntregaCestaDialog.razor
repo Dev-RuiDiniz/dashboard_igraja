@@ -1,0 +1,64 @@
+@using MudBlazor
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Models
+
+@inject CestaService CestaService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.subtitle1">@_titulo</MudText>
+
+            <MudDatePicker Label="Data da Entrega" @bind-Date="_dataEntrega" />
+
+            <MudTextField T="string" Label="Observações" Lines="3" TextArea="true"
+                          @bind-Value="_observacoes" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Confirmar Entrega</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] public MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public Familia? FamiliaSelecionada { get; set; }
+
+    private DateTime? _dataEntrega = DateTime.Today;
+    private string _observacoes = string.Empty;
+    private string _titulo = "Registrar entrega de cesta básica";
+
+    protected override void OnInitialized()
+    {
+        if (FamiliaSelecionada is not null)
+        {
+            _titulo = $"Registrar entrega - {FamiliaSelecionada.NomeResponsavel}";
+        }
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+
+    private async Task Submit()
+    {
+        if (FamiliaSelecionada is null)
+        {
+            Snackbar.Add("Selecione uma família para registrar a entrega.", Severity.Error);
+            return;
+        }
+
+        var request = new CestaBasicaEntregaRequest
+        {
+            FamiliaId = FamiliaSelecionada.Id,
+            DataEntrega = _dataEntrega ?? DateTime.Today,
+            Observacoes = _observacoes
+        };
+
+        var sucesso = await CestaService.RegistrarEntregaAsync(request);
+        if (sucesso)
+        {
+            MudDialog?.Close(DialogResult.Ok(true));
+        }
+    }
+}

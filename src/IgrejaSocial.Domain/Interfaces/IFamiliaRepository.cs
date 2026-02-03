@@ -11,6 +11,7 @@ namespace IgrejaSocial.Domain.Interfaces
         Task<Familia?> ObterPorCpfAsync(string cpf);
         Task<IEnumerable<Familia>> ListarTodasAsync(); // O repositório deve implementar exatamente este nome
         Task<IEnumerable<Familia>> ListarVulneraveisAsync();
+        Task<IEnumerable<Familia>> ListarRankingVulnerabilidadeAsync(int limite);
         Task<IEnumerable<Familia>> ListarPorBairroAsync(string bairro);
         Task<bool> JaRecebeuBeneficioNoMesAtualAsync(Guid familiaId);
         Task AdicionarAsync(Familia familia);

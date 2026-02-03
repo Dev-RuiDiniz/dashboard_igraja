@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using IgrejaSocial.Infrastructure.Data;
+using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
+using IgrejaSocial.Infrastructure.Data;
 
 namespace IgrejaSocial.API.Controllers
 {
@@ -10,10 +12,12 @@ namespace IgrejaSocial.API.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IgrejaSocialDbContext _context;
+        private readonly IFamiliaRepository _familiaRepository;
 
-        public DashboardController(IgrejaSocialDbContext context)
+        public DashboardController(IgrejaSocialDbContext context, IFamiliaRepository familiaRepository)
         {
             _context = context;
+            _familiaRepository = familiaRepository;
         }
 
         [HttpGet("resumo")]
@@ -42,6 +46,55 @@ namespace IgrejaSocial.API.Controllers
                 EquipamentosEmprestados = equipamentosEmprestados,
                 FamiliasVulneraveis = familiasVulneraveis
             });
+        }
+
+        [HttpGet("ranking-vulnerabilidade")]
+        public async Task<ActionResult<IEnumerable<RankingVulnerabilidadeDto>>> GetRankingVulnerabilidade([FromQuery] int limite = 5)
+        {
+            var familias = await _familiaRepository.ListarRankingVulnerabilidadeAsync(limite);
+            var ranking = familias.Select(familia => new RankingVulnerabilidadeDto
+            {
+                Id = familia.Id,
+                NomeResponsavel = familia.NomeResponsavel,
+                RendaPerCapita = familia.RendaPerCapita,
+                TotalDependentes = familia.Membros.Count
+            }).ToList();
+
+            return Ok(ranking);
+        }
+
+        [HttpGet("atencao")]
+        public async Task<ActionResult<IEnumerable<FamiliaAtencaoDto>>> GetFamiliasAtencao()
+        {
+            var limiteData = DateTime.Today.AddMonths(-2);
+            var familias = await _context.Familias.Include(f => f.Membros).ToListAsync();
+            var ultimasCestas = await _context.RegistrosAtendimento
+                .Where(r => r.TipoAtendimento == TipoAtendimento.CestaBasica && r.DataEntrega.HasValue)
+                .GroupBy(r => r.FamiliaId)
+                .Select(g => new { FamiliaId = g.Key, UltimaEntrega = g.Max(r => r.DataEntrega) })
+                .ToListAsync();
+
+            var ultimaPorFamilia = ultimasCestas
+                .ToDictionary(item => item.FamiliaId, item => item.UltimaEntrega);
+
+            var resultado = familias
+                .Select(familia =>
+                {
+                    ultimaPorFamilia.TryGetValue(familia.Id, out var ultimaEntrega);
+                    return new FamiliaAtencaoDto
+                    {
+                        Id = familia.Id,
+                        NomeResponsavel = familia.NomeResponsavel,
+                        UltimaEntregaCesta = ultimaEntrega,
+                        RendaPerCapita = familia.RendaPerCapita,
+                        TotalDependentes = familia.Membros.Count
+                    };
+                })
+                .Where(dto => !dto.UltimaEntregaCesta.HasValue || dto.UltimaEntregaCesta.Value.Date < limiteData)
+                .OrderBy(dto => dto.UltimaEntregaCesta ?? DateTime.MinValue)
+                .ToList();
+
+            return Ok(resultado);
         }
     }
 }

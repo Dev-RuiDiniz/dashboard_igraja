@@ -45,6 +45,7 @@
         <MudTh>Responsável</MudTh>
         <MudTh>CPF</MudTh>
         <MudTh>RG</MudTh>
+        <MudTh>Docs</MudTh>
         <MudTh>Endereço</MudTh>
         <MudTh>Bairro</MudTh>
         <MudTh>Renda Per Capita</MudTh>
@@ -60,6 +61,20 @@
                 : context.CpfResponsavel)
         </MudTd>
         <MudTd DataLabel="RG">@context.RgResponsavel</MudTd>
+        <MudTd DataLabel="Docs">
+            @if (!context.DocumentacaoApresentada)
+            {
+                <MudTooltip Text="Documentação pendente">
+                    <MudIcon Icon="@Icons.Material.Filled.ReportProblem" Color="Color.Warning" />
+                </MudTooltip>
+            }
+            else
+            {
+                <MudTooltip Text="Documentação conferida">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" />
+                </MudTooltip>
+            }
+        </MudTd>
         <MudTd DataLabel="Endereço">@context.Endereco</MudTd>
         <MudTd DataLabel="Bairro">@GetBairro(context.Endereco)</MudTd>
         <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
@@ -73,6 +88,8 @@
             </MudChip>
         </MudTd>
         <MudTd>
+            <MudIconButton Icon="@Icons.Material.Filled.ShoppingBasket" Color="Color.Success" Size="Size.Small" Title="Registrar entrega de cesta"
+                           OnClick="@(() => OpenEntregaCestaDialog(context))" />
             <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" Title="Ver Detalhes"
                            OnClick="@(() => OpenHistoricoDialog(context))" />
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small" Title="Editar" />
@@ -121,6 +138,18 @@
         };
 
         await DialogService.ShowAsync<FamiliaDialog>("Detalhes da Família", parameters, options);
+    }
+
+    private async Task OpenEntregaCestaDialog(Familia familia)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters
+        {
+            { "FamiliaSelecionada", familia }
+        };
+
+        var dialog = await DialogService.ShowAsync<EntregaCestaDialog>("Registrar entrega de cesta", parameters, options);
+        await dialog.Result;
     }
 
     // Lógica de filtro da MudTable
