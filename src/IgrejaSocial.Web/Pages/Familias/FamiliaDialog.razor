@@ -5,6 +5,7 @@
 @using IgrejaSocial.Domain.Models
 
 @inject FamiliaService FamiliaService
+@inject EmprestimoService EmprestimoService
 @inject ISnackbar Snackbar
 
 <MudDialog>
@@ -12,7 +13,7 @@
         <div class="d-flex align-center justify-space-between w-100">
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.GroupAdd" Class="mr-3 mb-n1" />
-                Cadastro de Família
+                @_tituloDialogo
             </MudText>
             
             @* TAREFA 9: Status Visual de Vulnerabilidade em Tempo Real *@
@@ -44,25 +45,31 @@
                     <MudGrid>
                         <MudItem xs="12" md="8">
                             <MudTextField T="string" Label="Nome do Responsável" Required="true"
-                                          @bind-Value="_familia.NomeResponsavel" Variant="Variant.Outlined" />
+                                          @bind-Value="_familia.NomeResponsavel" Variant="Variant.Outlined"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
                             <MudTextField T="string" Label="CPF" Mask="@(new PatternMask("000.000.000-00"))"
-                                          @bind-Value="_familia.CpfResponsavel" Variant="Variant.Outlined" />
+                                          @bind-Value="_familia.CpfResponsavel" Variant="Variant.Outlined"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
                             <MudTextField T="string" Label="RG" Mask="@(new PatternMask("00.000.000-0"))"
-                                          @bind-Value="_familia.RgResponsavel" Variant="Variant.Outlined" />
+                                          @bind-Value="_familia.RgResponsavel" Variant="Variant.Outlined"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoResponsavel" Variant="Variant.Outlined" />
+                            <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoResponsavel" Variant="Variant.Outlined"
+                                           Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
                             <MudTextField T="string" Label="Telefone" Mask="@(new PatternMask("(00) 00000-0000"))"
-                                          @bind-Value="_familia.TelefoneContato" Variant="Variant.Outlined" />
+                                          @bind-Value="_familia.TelefoneContato" Variant="Variant.Outlined"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudSelect T="TipoMoradia" Label="Tipo de Moradia" @bind-Value="_familia.Residencia" Variant="Variant.Outlined">
+                            <MudSelect T="TipoMoradia" Label="Tipo de Moradia" @bind-Value="_familia.Residencia" Variant="Variant.Outlined"
+                                       Disabled="@_isSomenteLeitura">
                                 @foreach (TipoMoradia item in Enum.GetValues(typeof(TipoMoradia)))
                                 {
                                     <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
@@ -70,7 +77,8 @@
                             </MudSelect>
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudSelect T="StatusAcompanhamento" Label="Status do Acompanhamento" @bind-Value="_familia.Status" Variant="Variant.Outlined">
+                            <MudSelect T="StatusAcompanhamento" Label="Status do Acompanhamento" @bind-Value="_familia.Status" Variant="Variant.Outlined"
+                                       Disabled="@_isSomenteLeitura">
                                 @foreach (StatusAcompanhamento item in Enum.GetValues(typeof(StatusAcompanhamento)))
                                 {
                                     <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
@@ -81,19 +89,22 @@
                             <MudTextField T="string" Label="CEP" @bind-Value="_cepBusca" TextChanged="OnCepChanged"
                                           Mask="@(new PatternMask("00000-000"))" Variant="Variant.Outlined"
                                           Adornment="Adornment.End"
-                                          AdornmentIcon="@(_loadingCep ? Icons.Material.Filled.HourglassEmpty : Icons.Material.Filled.Search)" />
+                                          AdornmentIcon="@(_loadingCep ? Icons.Material.Filled.HourglassEmpty : Icons.Material.Filled.Search)"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="8">
                             <MudTextField T="string" Label="Endereço Completo" @bind-Value="_familia.Endereco"
-                                          Variant="Variant.Outlined" Required="true" />
+                                          Variant="Variant.Outlined" Required="true" Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="6">
                             <MudNumericField T="decimal" Label="Renda Base do Responsável" @bind-Value="_familia.RendaFamiliarTotal"
-                                             Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentText="R$" />
+                                             Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentText="R$"
+                                             Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="6">
                             <MudTextField T="string" Label="Observações" Lines="3" TextArea="true"
-                                          @bind-Value="_familia.Observacoes" Variant="Variant.Outlined" />
+                                          @bind-Value="_familia.Observacoes" Variant="Variant.Outlined"
+                                          Disabled="@_isSomenteLeitura" />
                         </MudItem>
                     </MudGrid>
                 </MudTabPanel>
@@ -104,11 +115,11 @@
                         <MudGrid>
                             <MudItem xs="12" md="4">
                                 <MudTextField T="string" Label="Nome" @bind-Value="_novoMembro.Nome" 
-                                              Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                              Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@_isSomenteLeitura" />
                             </MudItem>
                             <MudItem xs="6" md="4">
                                 <MudSelect T="TipoParentesco" Label="Parentesco" @bind-Value="_novoMembro.Parentesco" 
-                                           Variant="Variant.Outlined" Margin="Margin.Dense">
+                                           Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@_isSomenteLeitura">
                                     @foreach (TipoParentesco item in Enum.GetValues(typeof(TipoParentesco)))
                                     {
                                         if (item != TipoParentesco.Responsavel)
@@ -120,11 +131,13 @@
                             </MudItem>
                             <MudItem xs="6" md="4">
                                 <MudNumericField T="decimal" Label="Renda" @bind-Value="_novoMembro.RendaIndividual" 
-                                                Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentText="R$" />
+                                                Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start"
+                                                AdornmentText="R$" Disabled="@_isSomenteLeitura" />
                             </MudItem>
                             
                             <MudItem xs="12" md="4">
-                                <MudSelect T="GrauInstrucao" Label="Escolaridade" @bind-Value="_novoMembro.NivelEscolar" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                <MudSelect T="GrauInstrucao" Label="Escolaridade" @bind-Value="_novoMembro.NivelEscolar" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                           Disabled="@_isSomenteLeitura">
                                     @foreach (GrauInstrucao item in Enum.GetValues(typeof(GrauInstrucao)))
                                     {
                                         <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
@@ -132,7 +145,8 @@
                                 </MudSelect>
                             </MudItem>
                             <MudItem xs="12" md="4">
-                                <MudSelect T="StatusOcupacional" Label="Trabalho" @bind-Value="_novoMembro.SituacaoTrabalho" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                <MudSelect T="StatusOcupacional" Label="Trabalho" @bind-Value="_novoMembro.SituacaoTrabalho" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                           Disabled="@_isSomenteLeitura">
                                     @foreach (StatusOcupacional item in Enum.GetValues(typeof(StatusOcupacional)))
                                     {
                                         <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
@@ -140,12 +154,13 @@
                                 </MudSelect>
                             </MudItem>
                             <MudItem xs="12" md="4">
-                                <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoMembro" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoMembro" Variant="Variant.Outlined"
+                                               Margin="Margin.Dense" Disabled="@_isSomenteLeitura" />
                             </MudItem>
 
                             <MudItem xs="12" Class="d-flex justify-end">
                                 <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" 
-                                           Variant="Variant.Filled" OnClick="AdicionarMembro">
+                                           Variant="Variant.Filled" OnClick="AdicionarMembro" Disabled="@_isSomenteLeitura">
                                     Adicionar à Lista
                                 </MudButton>
                             </MudItem>
@@ -165,9 +180,33 @@
                             <MudTd>@context.RendaIndividual.ToString("C")</MudTd>
                             <MudTd>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" 
-                                               Size="Size.Small" OnClick="@(() => RemoverMembro(context))" />
+                                               Size="Size.Small" OnClick="@(() => RemoverMembro(context))" Disabled="@_isSomenteLeitura" />
                             </MudTd>
                         </RowTemplate>
+                    </MudTable>
+                </MudTabPanel>
+
+                <MudTabPanel Text="Histórico" Icon="@Icons.Material.Filled.History">
+                    <MudTable Items="@_historico" Hover="true" Dense="true" Elevation="0" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Equipamento</MudTh>
+                            <MudTh>Tipo</MudTh>
+                            <MudTh>Empréstimo</MudTh>
+                            <MudTh>Previsão</MudTh>
+                            <MudTh>Devolução</MudTh>
+                            <MudTh>Estado</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.CodigoPatrimonio - @context.DescricaoEquipamento</MudTd>
+                            <MudTd>@context.TipoEquipamento</MudTd>
+                            <MudTd>@context.DataEmprestimo.ToString("dd/MM/yyyy")</MudTd>
+                            <MudTd>@context.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</MudTd>
+                            <MudTd>@(context.DataDevolucaoReal.HasValue ? context.DataDevolucaoReal.Value.ToString("dd/MM/yyyy") : "Em aberto")</MudTd>
+                            <MudTd>@FormatarEstadoConservacao(context.EstadoConservacao)</MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">Nenhum empréstimo registrado para esta família.</MudText>
+                        </NoRecordsContent>
                     </MudTable>
                 </MudTabPanel>
             </MudTabs>
@@ -175,13 +214,17 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancelar</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" 
-                   Disabled="@(!_success)" OnClick="Submit">Finalizar Cadastro</MudButton>
+        @if (!_isSomenteLeitura)
+        {
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" 
+                       Disabled="@(!_success)" OnClick="Submit">Finalizar Cadastro</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] public MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public Familia? FamiliaSelecionada { get; set; }
 
     private MudForm? form;
     private bool _success;
@@ -189,9 +232,24 @@
     private string _cepBusca = string.Empty;
     private DateTime? _dataNascimentoMembro = DateTime.Today.AddYears(-20);
     private DateTime? _dataNascimentoResponsavel = DateTime.Today.AddYears(-30);
-    
+
     private Familia _familia = new() { Membros = new List<MembroFamilia>() };
     private MembroFamilia _novoMembro = new();
+    private List<RegistroAtendimentoHistoricoDto> _historico = new();
+    private bool _isSomenteLeitura;
+    private string _tituloDialogo = "Cadastro de Família";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (FamiliaSelecionada is not null)
+        {
+            _familia = FamiliaSelecionada;
+            _dataNascimentoResponsavel = _familia.DataNascimentoResponsavel;
+            _isSomenteLeitura = true;
+            _tituloDialogo = "Detalhes da Família";
+            _historico = await EmprestimoService.GetHistoricoFamiliaAsync(_familia.Id);
+        }
+    }
 
     private void AdicionarMembro() {
         if (!string.IsNullOrWhiteSpace(_novoMembro.Nome)) {
@@ -245,4 +303,7 @@
             }
         }
     }
+
+    private static string FormatarEstadoConservacao(StatusEquipamento estado)
+        => estado == StatusEquipamento.NecessitaManutencao ? "Precisa reparo" : estado.ToString();
 }

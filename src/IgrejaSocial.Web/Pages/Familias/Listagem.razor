@@ -73,7 +73,8 @@
             </MudChip>
         </MudTd>
         <MudTd>
-            <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" Title="Ver Detalhes" />
+            <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" Title="Ver Detalhes"
+                           OnClick="@(() => OpenHistoricoDialog(context))" />
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small" Title="Editar" />
         </MudTd>
     </RowTemplate>
@@ -109,6 +110,17 @@
         {
             _familias = await FamiliaService.GetFamiliasAsync();
         }
+    }
+
+    private async Task OpenHistoricoDialog(Familia familia)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var parameters = new DialogParameters
+        {
+            { "FamiliaSelecionada", familia }
+        };
+
+        await DialogService.ShowAsync<FamiliaDialog>("Detalhes da Família", parameters, options);
     }
 
     // Lógica de filtro da MudTable

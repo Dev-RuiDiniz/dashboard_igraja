@@ -30,6 +30,19 @@
         </MudCard>
     </MudItem>
 
+    @* Card: Equipamentos Emprestados *@
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-info);">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Info" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1">Itens em Uso</MudText>
+                    <MudText Typo="Typo.h4">@_stats.EquipamentosEmprestados</MudText>
+                </MudStack>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+
     @* Card: Alertas de Atenção (Vulnerabilidade) *@
     <MudItem xs="12" sm="6" md="4">
         <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-error);">
