@@ -17,12 +17,12 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-// --- 2. Configuração do Banco de Dados (SQLite) ---
+// --- 2. Configuração do Banco de Dados (SQL Server) ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 
 // --- 3. Registro do Serviço de CEP ---
 builder.Services.AddHttpClient<ICepService, ViaCepService>(client =>

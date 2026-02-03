@@ -15,15 +15,15 @@ namespace IgrejaSocial.Infrastructure.Migrations
                 name: "Equipamentos",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CodigoPatrimonio = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    Tipo = table.Column<int>(type: "INTEGER", nullable: false),
-                    Estado = table.Column<int>(type: "INTEGER", nullable: false),
-                    Descricao = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    IsDisponivel = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DataAquisicao = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ValorEstimado = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    ObservacoesInternas = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CodigoPatrimonio = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Tipo = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<int>(type: "int", nullable: false),
+                    Descricao = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    IsDisponivel = table.Column<bool>(type: "bit", nullable: false),
+                    DataAquisicao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ValorEstimado = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    ObservacoesInternas = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,16 +34,16 @@ namespace IgrejaSocial.Infrastructure.Migrations
                 name: "Familias",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    NomeResponsavel = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    CpfResponsavel = table.Column<string>(type: "TEXT", nullable: false),
-                    Residencia = table.Column<int>(type: "INTEGER", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Endereco = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
-                    TelefoneContato = table.Column<string>(type: "TEXT", nullable: false),
-                    RendaFamiliarTotal = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    Observacoes = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NomeResponsavel = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CpfResponsavel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Residencia = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    TelefoneContato = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RendaFamiliarTotal = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Observacoes = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,15 +54,15 @@ namespace IgrejaSocial.Infrastructure.Migrations
                 name: "Membros",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    DataNascimento = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Parentesco = table.Column<int>(type: "INTEGER", nullable: false),
-                    NivelEscolar = table.Column<int>(type: "INTEGER", nullable: false),
-                    SituacaoTrabalho = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cpf = table.Column<string>(type: "TEXT", maxLength: 11, nullable: false),
-                    PossuiDeficiencia = table.Column<bool>(type: "INTEGER", nullable: false),
-                    FamiliaId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    DataNascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Parentesco = table.Column<int>(type: "int", nullable: false),
+                    NivelEscolar = table.Column<int>(type: "int", nullable: false),
+                    SituacaoTrabalho = table.Column<int>(type: "int", nullable: false),
+                    Cpf = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    PossuiDeficiencia = table.Column<bool>(type: "bit", nullable: false),
+                    FamiliaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {

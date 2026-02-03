@@ -17,7 +17,7 @@ namespace IgrejaSocial.Domain.Entities
         public TipoEquipamento Tipo { get; set; } //
 
         [Required]
-        public EstadoConservacao Estado { get; set; } //
+        public StatusEquipamento Estado { get; set; } //
 
         [Required(ErrorMessage = "A descrição é necessária para identificação.")]
         [StringLength(200)]

@@ -43,7 +43,7 @@ namespace IgrejaSocial.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, EstadoConservacao estado)
+        public async Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, StatusEquipamento estado)
         {
             return await _context.Equipamentos
                 .Where(e => e.Tipo == tipo && e.Estado == estado)
