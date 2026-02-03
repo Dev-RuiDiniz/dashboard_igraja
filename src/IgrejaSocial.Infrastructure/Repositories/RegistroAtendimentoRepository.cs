@@ -25,7 +25,9 @@ namespace IgrejaSocial.Infrastructure.Repositories
         {
             return await _context.RegistrosAtendimento
                 .Include(r => r.Equipamento)
-                .FirstOrDefaultAsync(r => r.EquipamentoId == equipamentoId && r.DataDevolucaoReal == null);
+                .FirstOrDefaultAsync(r => r.EquipamentoId == equipamentoId
+                                          && r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento
+                                          && r.DataDevolucaoReal == null);
         }
 
         public async Task<bool> ExisteEmprestimoAtivoPorFamiliaETipoAsync(Guid familiaId, TipoEquipamento tipo)
@@ -33,16 +35,28 @@ namespace IgrejaSocial.Infrastructure.Repositories
             return await _context.RegistrosAtendimento
                 .Include(r => r.Equipamento)
                 .AnyAsync(r => r.FamiliaId == familiaId
+                               && r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento
                                && r.DataDevolucaoReal == null
                                && r.Equipamento != null
                                && r.Equipamento.Tipo == tipo);
+        }
+
+        public async Task<bool> ExisteCestaBasicaNoMesAsync(Guid familiaId, int mes, int ano)
+        {
+            return await _context.RegistrosAtendimento
+                .AnyAsync(r => r.FamiliaId == familiaId
+                               && r.TipoAtendimento == TipoAtendimento.CestaBasica
+                               && r.DataEntrega.HasValue
+                               && r.DataEntrega.Value.Month == mes
+                               && r.DataEntrega.Value.Year == ano);
         }
 
         public async Task<List<RegistroAtendimento>> ListarPorFamiliaAsync(Guid familiaId)
         {
             return await _context.RegistrosAtendimento
                 .Include(r => r.Equipamento)
-                .Where(r => r.FamiliaId == familiaId)
+                .Where(r => r.FamiliaId == familiaId
+                            && r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento)
                 .OrderByDescending(r => r.DataEmprestimo)
                 .ToListAsync();
         }

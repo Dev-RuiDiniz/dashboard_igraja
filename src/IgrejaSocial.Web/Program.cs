@@ -22,5 +22,7 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<FamiliaService>();
 builder.Services.AddScoped<EquipamentoService>();
 builder.Services.AddScoped<EmprestimoService>();
+builder.Services.AddScoped<CestaService>();
+builder.Services.AddScoped<RelatorioService>();
 
 await builder.Build().RunAsync();

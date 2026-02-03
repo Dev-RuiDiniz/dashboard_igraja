@@ -71,6 +71,9 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("DocumentacaoApresentada")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RgResponsavel")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -78,10 +81,21 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DataNascimentoResponsavel")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Endereco")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
 
                     b.Property<string>("NomeResponsavel")
                         .IsRequired()
@@ -89,7 +103,6 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Observacoes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RendaFamiliarTotal")
@@ -103,7 +116,6 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TelefoneContato")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -121,7 +133,6 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Cpf")
-                        .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
@@ -145,6 +156,10 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     b.Property<bool>("PossuiDeficiencia")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("RendaIndividual")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("SituacaoTrabalho")
                         .HasColumnType("int");
 
@@ -155,6 +170,47 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     b.ToTable("Membros");
                 });
 
+            modelBuilder.Entity("IgrejaSocial.Domain.Entities.RegistroAtendimento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DataDevolucaoReal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataEmprestimo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataEntrega")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataPrevistaDevolucao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EquipamentoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FamiliaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Observacoes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TipoAtendimento")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipamentoId");
+
+                    b.HasIndex("FamiliaId");
+
+                    b.ToTable("RegistrosAtendimento");
+                });
+
             modelBuilder.Entity("IgrejaSocial.Domain.Entities.MembroFamilia", b =>
                 {
                     b.HasOne("IgrejaSocial.Domain.Entities.Familia", "Familia")
@@ -162,6 +218,24 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .HasForeignKey("FamiliaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Familia");
+                });
+
+            modelBuilder.Entity("IgrejaSocial.Domain.Entities.RegistroAtendimento", b =>
+                {
+                    b.HasOne("IgrejaSocial.Domain.Entities.Equipamento", "Equipamento")
+                        .WithMany()
+                        .HasForeignKey("EquipamentoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("IgrejaSocial.Domain.Entities.Familia", "Familia")
+                        .WithMany()
+                        .HasForeignKey("FamiliaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Equipamento");
 
                     b.Navigation("Familia");
                 });

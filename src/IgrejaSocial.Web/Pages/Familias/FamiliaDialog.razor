@@ -68,6 +68,10 @@
                                           Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="4">
+                            <MudSwitch Label="Documentação apresentada" Color="Color.Primary"
+                                       @bind-Checked="_familia.DocumentacaoApresentada" Disabled="@_isSomenteLeitura" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
                             <MudSelect T="TipoMoradia" Label="Tipo de Moradia" @bind-Value="_familia.Residencia" Variant="Variant.Outlined"
                                        Disabled="@_isSomenteLeitura">
                                 @foreach (TipoMoradia item in Enum.GetValues(typeof(TipoMoradia)))
@@ -95,6 +99,14 @@
                         <MudItem xs="12" md="8">
                             <MudTextField T="string" Label="Endereço Completo" @bind-Value="_familia.Endereco"
                                           Variant="Variant.Outlined" Required="true" Disabled="@_isSomenteLeitura" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudNumericField T="decimal?" Label="Latitude" @bind-Value="_familia.Latitude"
+                                             Variant="Variant.Outlined" Disabled="@_isSomenteLeitura" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudNumericField T="decimal?" Label="Longitude" @bind-Value="_familia.Longitude"
+                                             Variant="Variant.Outlined" Disabled="@_isSomenteLeitura" />
                         </MudItem>
                         <MudItem xs="12" md="6">
                             <MudNumericField T="decimal" Label="Renda Base do Responsável" @bind-Value="_familia.RendaFamiliarTotal"
@@ -165,6 +177,18 @@
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
+                    </MudPaper>
+
+                    <MudPaper Class="pa-3 mb-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
+                        <MudText Typo="Typo.subtitle2">Composição de dependentes</MudText>
+                        <MudStack Row="true" Spacing="2">
+                            <MudChip Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">
+                                Adultos: @_familia.TotalAdultosDependentes
+                            </MudChip>
+                            <MudChip Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">
+                                Crianças: @_familia.TotalCriancasDependentes
+                            </MudChip>
+                        </MudStack>
                     </MudPaper>
 
                     <MudTable Items="@_familia.Membros" Hover="true" Dense="true" Elevation="0" Striped="true">
@@ -266,10 +290,15 @@
             _novoMembro = new MembroFamilia(); 
             _dataNascimentoMembro = DateTime.Today.AddYears(-20);
             Snackbar.Add("Membro adicionado.", Severity.Info);
+            StateHasChanged();
         }
     }
 
-    private void RemoverMembro(MembroFamilia membro) => _familia.Membros.Remove(membro);
+    private void RemoverMembro(MembroFamilia membro)
+    {
+        _familia.Membros.Remove(membro);
+        StateHasChanged();
+    }
 
     private async Task OnCepChanged(string val) {
         if (val?.Length == 9) {

@@ -55,6 +55,16 @@ namespace IgrejaSocial.Infrastructure.Repositories
             return familias.Where(f => f.IsVulneravel);
         }
 
+        public async Task<IEnumerable<Familia>> ListarRankingVulnerabilidadeAsync(int limite)
+        {
+            var familias = await _context.Familias.Include(f => f.Membros).ToListAsync();
+
+            return familias
+                .OrderBy(f => f.RendaPerCapita)
+                .ThenByDescending(f => f.Membros.Count)
+                .Take(limite);
+        }
+
         public async Task<bool> JaRecebeuBeneficioNoMesAtualAsync(Guid familiaId)
         {
             var inicioDoMes = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);

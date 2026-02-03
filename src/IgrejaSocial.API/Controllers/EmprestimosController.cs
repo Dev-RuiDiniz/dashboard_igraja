@@ -27,12 +27,22 @@ namespace IgrejaSocial.API.Controllers
         [HttpPost]
         public async Task<ActionResult<RegistroAtendimento>> Criar(RegistroAtendimento registro)
         {
-            if (registro.DataPrevistaDevolucao.Date < DateTime.Today)
+            if (!registro.EquipamentoId.HasValue || registro.EquipamentoId == Guid.Empty)
+            {
+                return BadRequest("Equipamento não informado para empréstimo.");
+            }
+
+            if (!registro.DataPrevistaDevolucao.HasValue)
+            {
+                return BadRequest("A data de previsão de devolução é obrigatória.");
+            }
+
+            if (registro.DataPrevistaDevolucao.Value.Date < DateTime.Today)
             {
                 return BadRequest("A data de previsão não pode ser retroativa.");
             }
 
-            var equipamento = await _equipamentoRepository.ObterPorIdAsync(registro.EquipamentoId);
+            var equipamento = await _equipamentoRepository.ObterPorIdAsync(registro.EquipamentoId.Value);
             if (equipamento is null)
             {
                 return BadRequest("Equipamento não encontrado.");
@@ -53,6 +63,7 @@ namespace IgrejaSocial.API.Controllers
             equipamento.IsDisponivel = false;
             _equipamentoRepository.Atualizar(equipamento);
 
+            registro.TipoAtendimento = TipoAtendimento.EmprestimoEquipamento;
             registro.DataEmprestimo = DateTime.Now;
             await _registroRepository.AdicionarAsync(registro);
             await _registroRepository.SalvarAlteracoesAsync();
@@ -98,12 +109,12 @@ namespace IgrejaSocial.API.Controllers
             var historico = registros.Select(registro => new RegistroAtendimentoHistoricoDto
             {
                 Id = registro.Id,
-                EquipamentoId = registro.EquipamentoId,
+                EquipamentoId = registro.EquipamentoId ?? Guid.Empty,
                 CodigoPatrimonio = registro.Equipamento?.CodigoPatrimonio ?? string.Empty,
                 DescricaoEquipamento = registro.Equipamento?.Descricao ?? string.Empty,
                 TipoEquipamento = registro.Equipamento?.Tipo ?? TipoEquipamento.Outro,
                 DataEmprestimo = registro.DataEmprestimo,
-                DataPrevistaDevolucao = registro.DataPrevistaDevolucao,
+                DataPrevistaDevolucao = registro.DataPrevistaDevolucao.GetValueOrDefault(),
                 DataDevolucaoReal = registro.DataDevolucaoReal,
                 EstadoConservacao = registro.Equipamento?.Estado ?? StatusEquipamento.Bom
             }).ToList();
