@@ -29,9 +29,9 @@
             <MudDatePicker Label="Previsão de devolução"
                            @bind-Date="_dataPrevistaDevolucao"
                            MinDate="@DateTime.Today"
-                           Dense="true"
+                           Margin="Margin.Dense"
                            Required="true"
-                           Validation="ValidarDataPrevista" />
+                           Validation="@(new Func<DateTime?, string?>(ValidarDataPrevista))" />
 
             <MudTextField @bind-Value="_observacoes"
                           Label="Observações"
@@ -67,7 +67,7 @@
         }
     }
 
-    private Task<IEnumerable<Familia>> BuscarFamilias(string value)
+    private Task<IEnumerable<Familia>> BuscarFamilias(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -80,7 +80,7 @@
         return Task.FromResult<IEnumerable<Familia>>(resultado);
     }
 
-    private Task<IEnumerable<Equipamento>> BuscarEquipamentos(string value)
+    private Task<IEnumerable<Equipamento>> BuscarEquipamentos(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
