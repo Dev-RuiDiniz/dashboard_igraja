@@ -1,5 +1,6 @@
 using AutoMapper;
 using IgrejaSocial.Application.DTOs;
+using IgrejaSocial.Application.Services;
 using IgrejaSocial.Domain.Entities;
 using IgrejaSocial.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,13 @@ namespace IgrejaSocial.API.Controllers
     public class EquipamentosController : ControllerBase
     {
         private readonly IEquipamentoRepository _repository;
+        private readonly EquipamentoService _equipamentoService;
         private readonly IMapper _mapper;
 
-        public EquipamentosController(IEquipamentoRepository repository, IMapper mapper)
+        public EquipamentosController(IEquipamentoRepository repository, EquipamentoService equipamentoService, IMapper mapper)
         {
             _repository = repository;
+            _equipamentoService = equipamentoService;
             _mapper = mapper;
         }
 
@@ -36,9 +39,7 @@ namespace IgrejaSocial.API.Controllers
         [HttpPost]
         public async Task<ActionResult<EquipamentoDto>> Criar(Equipamento equipamento)
         {
-            // Aqui futuramente chamaremos o PatrimonioService para gerar o código
-            await _repository.AdicionarAsync(equipamento);
-            await _repository.SalvarAlteracoesAsync();
+            await _equipamentoService.CriarAsync(equipamento);
 
             var equipamentoDto = _mapper.Map<EquipamentoDto>(equipamento);
             return CreatedAtAction(nameof(GetPorId), new { id = equipamento.Id }, equipamentoDto);
