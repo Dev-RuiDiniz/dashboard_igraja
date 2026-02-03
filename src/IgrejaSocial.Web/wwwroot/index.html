@@ -13,7 +13,10 @@
                 return;
             }
             const pathName = window.location.pathname;
-            const baseHref = pathName.endsWith("/") ? pathName : pathName.replace(/[^/]+$/, "");
+            let baseHref = pathName;
+            if (!baseHref.endsWith("/")) {
+                baseHref = baseHref.includes(".") ? baseHref.replace(/[^/]+$/, "") : `${baseHref}/`;
+            }
             baseTag.setAttribute("href", baseHref || "/");
         })();
     </script>
