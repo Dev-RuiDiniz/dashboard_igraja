@@ -1,6 +1,21 @@
 @IgrejaSocial.API_HostAddress = http://localhost:5099
 
-GET {{IgrejaSocial.API_HostAddress}}/weatherforecast/
+GET {{IgrejaSocial.API_HostAddress}}/api/Familias
+Accept: application/json
+
+###
+
+GET {{IgrejaSocial.API_HostAddress}}/api/Familias/vulneraveis
+Accept: application/json
+
+###
+
+GET {{IgrejaSocial.API_HostAddress}}/api/Equipamentos
+Accept: application/json
+
+###
+
+GET {{IgrejaSocial.API_HostAddress}}/api/Equipamentos/disponiveis
 Accept: application/json
 
 ###

@@ -11,7 +11,7 @@ namespace IgrejaSocial.Domain.Enums
         Outro
     }
 
-    public enum EstadoConservacao
+    public enum StatusEquipamento
     {
         Novo,
         Excelente,

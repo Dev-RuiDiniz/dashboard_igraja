@@ -93,8 +93,8 @@
                             </MudItem>
                             
                             <MudItem xs="12" md="4">
-                                <MudSelect T="Escolaridade" Label="Escolaridade" @bind-Value="_novoMembro.NivelEscolar" Variant="Variant.Outlined" Margin="Margin.Dense">
-                                    @foreach (Escolaridade item in Enum.GetValues(typeof(Escolaridade)))
+                                <MudSelect T="GrauInstrucao" Label="Escolaridade" @bind-Value="_novoMembro.NivelEscolar" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                    @foreach (GrauInstrucao item in Enum.GetValues(typeof(GrauInstrucao)))
                                     {
                                         <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
                                     }

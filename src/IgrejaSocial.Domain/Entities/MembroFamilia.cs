@@ -23,7 +23,7 @@ namespace IgrejaSocial.Domain.Entities
         public TipoParentesco Parentesco { get; set; }
 
         [Required(ErrorMessage = "A escolaridade deve ser informada.")]
-        public Escolaridade NivelEscolar { get; set; }
+        public GrauInstrucao NivelEscolar { get; set; }
 
         [Required(ErrorMessage = "O status ocupacional deve ser informado.")]
         public StatusOcupacional SituacaoTrabalho { get; set; }

@@ -40,6 +40,19 @@ namespace IgrejaSocial.API.Controllers
             await _repository.AdicionarAsync(equipamento);
             await _repository.SalvarAlteracoesAsync();
 
+            var equipamentoDto = _mapper.Map<EquipamentoDto>(equipamento);
+            return CreatedAtAction(nameof(GetPorId), new { id = equipamento.Id }, equipamentoDto);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<EquipamentoDto>> GetPorId(Guid id)
+        {
+            var equipamento = await _repository.ObterPorIdAsync(id);
+            if (equipamento is null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<EquipamentoDto>(equipamento));
         }
     }

@@ -13,7 +13,7 @@ namespace IgrejaSocial.Domain.Interfaces
         Task<IEnumerable<Equipamento>> ListarTodosAsync();
         Task<IEnumerable<Equipamento>> ListarDisponiveisAsync();
         Task<IEnumerable<Equipamento>> ListarPorStatusAsync(bool disponivel);
-        Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, EstadoConservacao estado);
+        Task<IEnumerable<Equipamento>> ListarPorTipoEEstadoAsync(TipoEquipamento tipo, StatusEquipamento estado);
         Task AdicionarAsync(Equipamento equipamento);
         void Atualizar(Equipamento equipamento);
         Task SalvarAlteracoesAsync();

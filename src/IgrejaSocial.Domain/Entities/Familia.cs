@@ -22,7 +22,7 @@ namespace IgrejaSocial.Domain.Entities
         public string CpfResponsavel { get; set; } = string.Empty;
 
         [Required]
-        public TipoResidencia Residencia { get; set; }
+        public TipoMoradia Residencia { get; set; }
 
         [Required]
         public StatusAcompanhamento Status { get; set; }

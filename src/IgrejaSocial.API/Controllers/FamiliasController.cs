@@ -40,7 +40,19 @@ namespace IgrejaSocial.API.Controllers
             await _repository.SalvarAlteracoesAsync();
 
             var familiaDto = _mapper.Map<FamiliaDto>(familia);
-            return CreatedAtAction(nameof(GetTodas), new { id = familia.Id }, familiaDto);
+            return CreatedAtAction(nameof(GetPorId), new { id = familia.Id }, familiaDto);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<FamiliaDto>> GetPorId(Guid id)
+        {
+            var familia = await _repository.ObterPorIdAsync(id);
+            if (familia is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<FamiliaDto>(familia));
         }
     }
 }

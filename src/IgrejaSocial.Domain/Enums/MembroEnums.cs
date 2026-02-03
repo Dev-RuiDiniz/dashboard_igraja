@@ -12,7 +12,7 @@ namespace IgrejaSocial.Domain.Enums
         Outro
     }
 
-    public enum Escolaridade
+    public enum GrauInstrucao
     {
         NaoAlfabetizado,
         EnsinoFundamentalIncompleto,

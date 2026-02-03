@@ -1,6 +1,6 @@
 namespace IgrejaSocial.Domain.Enums
 {
-    public enum TipoResidencia
+    public enum TipoMoradia
     {
         Propria,
         Alugada,
