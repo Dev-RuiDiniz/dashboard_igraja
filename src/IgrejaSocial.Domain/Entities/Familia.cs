@@ -30,6 +30,9 @@ namespace IgrejaSocial.Domain.Entities
         [DataType(DataType.Date)]
         public DateTime DataCadastro { get; set; } = DateTime.Now;
 
+        [DataType(DataType.Date)]
+        public DateTime? DataNascimentoResponsavel { get; set; }
+
         [Required(ErrorMessage = "O endereço é obrigatório.")]
         [StringLength(255)]
         public string Endereco { get; set; } = string.Empty;
@@ -44,6 +47,11 @@ namespace IgrejaSocial.Domain.Entities
         public virtual ICollection<MembroFamilia> Membros { get; set; } = new List<MembroFamilia>();
 
         public int TotalIntegrantes => Membros.Count + 1;
+
+        public int? IdadeResponsavel => DataNascimentoResponsavel.HasValue
+            ? DateTime.Today.Year - DataNascimentoResponsavel.Value.Year -
+              (DateTime.Today < DataNascimentoResponsavel.Value.AddYears(DateTime.Today.Year - DataNascimentoResponsavel.Value.Year) ? 1 : 0)
+            : null;
 
         public decimal RendaPerCapita => TotalIntegrantes > 0 
             ? (RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual)) / TotalIntegrantes 
