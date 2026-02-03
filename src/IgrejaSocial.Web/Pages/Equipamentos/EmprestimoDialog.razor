@@ -1,0 +1,146 @@
+@using System.Globalization
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Enums
+@inject FamiliaService FamiliaService
+@inject EquipamentoService EquipamentoService
+@inject EmprestimoService EmprestimoService
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="2">
+            <MudAutocomplete T="Familia"
+                             Label="Família"
+                             @bind-Value="_familiaSelecionada"
+                             SearchFunc="BuscarFamilias"
+                             ToStringFunc="FormatarFamilia"
+                             Dense="true"
+                             Required="true"
+                             RequiredError="Selecione uma família." />
+
+            <MudAutocomplete T="Equipamento"
+                             Label="Equipamento disponível"
+                             @bind-Value="_equipamentoSelecionado"
+                             SearchFunc="BuscarEquipamentos"
+                             ToStringFunc="FormatarEquipamento"
+                             Dense="true"
+                             Required="true"
+                             RequiredError="Selecione um equipamento." />
+
+            <MudDatePicker Label="Previsão de devolução"
+                           @bind-Date="_dataPrevistaDevolucao"
+                           MinDate="@DateTime.Today"
+                           Dense="true"
+                           Required="true"
+                           Validation="ValidarDataPrevista" />
+
+            <MudTextField @bind-Value="_observacoes"
+                          Label="Observações"
+                          Lines="3"
+                          Variant="Variant.Outlined" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RegistrarEmprestimo">Confirmar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Equipamento? EquipamentoPreSelecionado { get; set; }
+
+    private List<Familia> _familias = new();
+    private List<Equipamento> _equipamentos = new();
+    private Familia? _familiaSelecionada;
+    private Equipamento? _equipamentoSelecionado;
+    private DateTime? _dataPrevistaDevolucao;
+    private string _observacoes = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _familias = await FamiliaService.GetFamiliasAsync();
+        _equipamentos = await EquipamentoService.GetDisponiveisAsync();
+
+        if (EquipamentoPreSelecionado is not null)
+        {
+            _equipamentoSelecionado = _equipamentos.FirstOrDefault(e => e.Id == EquipamentoPreSelecionado.Id);
+        }
+    }
+
+    private Task<IEnumerable<Familia>> BuscarFamilias(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult<IEnumerable<Familia>>(_familias);
+        }
+
+        var resultado = _familias.Where(f =>
+            f.NomeResponsavel.Contains(value, StringComparison.OrdinalIgnoreCase) ||
+            f.CpfResponsavel.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<Familia>>(resultado);
+    }
+
+    private Task<IEnumerable<Equipamento>> BuscarEquipamentos(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult<IEnumerable<Equipamento>>(_equipamentos);
+        }
+
+        var resultado = _equipamentos.Where(e =>
+            e.Descricao.Contains(value, StringComparison.OrdinalIgnoreCase) ||
+            e.CodigoPatrimonio.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<Equipamento>>(resultado);
+    }
+
+    private string FormatarFamilia(Familia? familia)
+    {
+        if (familia is null) return string.Empty;
+        var cpfFormatado = long.TryParse(familia.CpfResponsavel, out var cpf)
+            ? cpf.ToString(@"000\.000\.000-00", CultureInfo.InvariantCulture)
+            : familia.CpfResponsavel;
+        return $"{familia.NomeResponsavel} - {cpfFormatado}";
+    }
+
+    private static string FormatarEquipamento(Equipamento? equipamento)
+        => equipamento is null ? string.Empty : $"{equipamento.CodigoPatrimonio} - {equipamento.Descricao}";
+
+    private string? ValidarDataPrevista(DateTime? data)
+    {
+        if (!data.HasValue)
+        {
+            return "Informe a data prevista para devolução.";
+        }
+
+        if (data.Value.Date < DateTime.Today)
+        {
+            return "A data não pode ser retroativa.";
+        }
+
+        return null;
+    }
+
+    private async Task RegistrarEmprestimo()
+    {
+        if (_familiaSelecionada is null || _equipamentoSelecionado is null || !_dataPrevistaDevolucao.HasValue)
+        {
+            return;
+        }
+
+        var registro = new RegistroAtendimento
+        {
+            FamiliaId = _familiaSelecionada.Id,
+            EquipamentoId = _equipamentoSelecionado.Id,
+            DataPrevistaDevolucao = _dataPrevistaDevolucao.Value,
+            Observacoes = _observacoes
+        };
+
+        var sucesso = await EmprestimoService.CriarEmprestimoAsync(registro);
+        if (sucesso)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+    private void Cancelar() => MudDialog.Cancel();
+}

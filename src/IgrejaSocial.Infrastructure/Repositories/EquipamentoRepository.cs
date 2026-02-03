@@ -50,6 +50,11 @@ namespace IgrejaSocial.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<int> ContarPorTipoAsync(TipoEquipamento tipo)
+        {
+            return await _context.Equipamentos.CountAsync(e => e.Tipo == tipo);
+        }
+
         public async Task AdicionarAsync(Equipamento equipamento) => await _context.Equipamentos.AddAsync(equipamento);
 
         public void Atualizar(Equipamento equipamento) => _context.Equipamentos.Update(equipamento);

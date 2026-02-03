@@ -12,6 +12,7 @@ namespace IgrejaSocial.Infrastructure.Data
         public DbSet<Familia> Familias { get; set; }
         public DbSet<MembroFamilia> Membros { get; set; }
         public DbSet<Equipamento> Equipamentos { get; set; }
+        public DbSet<RegistroAtendimento> RegistrosAtendimento { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,7 +51,25 @@ namespace IgrejaSocial.Infrastructure.Data
                 entity.Property(e => e.ValorEstimado).HasPrecision(18, 2);
             });
 
-            // 4. SEED DE DADOS (Tarefa 10)
+            // 4. Configuração: RegistroAtendimento
+            modelBuilder.Entity<RegistroAtendimento>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+                entity.Property(r => r.Observacoes).HasMaxLength(500);
+                entity.Property(r => r.EstadoConservacao).HasConversion<string>();
+
+                entity.HasOne(r => r.Familia)
+                    .WithMany()
+                    .HasForeignKey(r => r.FamiliaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.Equipamento)
+                    .WithMany()
+                    .HasForeignKey(r => r.EquipamentoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // 5. SEED DE DADOS (Tarefa 10)
             SeedDados(modelBuilder);
         }
 

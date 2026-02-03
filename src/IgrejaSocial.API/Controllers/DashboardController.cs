@@ -26,6 +26,10 @@ namespace IgrejaSocial.API.Controllers
             var equipamentosDisponiveis = await _context.Equipamentos
                 .CountAsync(e => e.IsDisponivel);
 
+            // 2.1 Contagem de equipamentos em uso
+            var equipamentosEmUso = await _context.Equipamentos
+                .CountAsync(e => !e.IsDisponivel);
+
             // 3. Contagem de famílias vulneráveis (Renda per capita < 660)
             // Nota: Se você já implementou a lógica de vulnerabilidade no Domain,
             // podemos filtrar aqui.
@@ -36,6 +40,7 @@ namespace IgrejaSocial.API.Controllers
             {
                 TotalFamilias = totalFamilias,
                 EquipamentosDisponiveis = equipamentosDisponiveis,
+                EquipamentosEmUso = equipamentosEmUso,
                 FamiliasVulneraveis = familiasVulneraveis
             });
         }

@@ -5,7 +5,7 @@
 
 <MudGrid>
     @* Card: Famílias Atendidas *@
-    <MudItem xs="12" sm="6" md="4">
+    <MudItem xs="12" sm="6" md="3">
         <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-primary);">
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary" Size="Size.Large" />
@@ -18,7 +18,7 @@
     </MudItem>
 
     @* Card: Equipamentos Disponíveis *@
-    <MudItem xs="12" sm="6" md="4">
+    <MudItem xs="12" sm="6" md="3">
         <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-success);">
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudIcon Icon="@Icons.Material.Filled.WheelchairPickup" Color="Color.Success" Size="Size.Large" />
@@ -30,8 +30,21 @@
         </MudCard>
     </MudItem>
 
+    @* Card: Equipamentos em Uso *@
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-info);">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.Handshake" Color="Color.Info" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.subtitle1">Itens em Uso</MudText>
+                    <MudText Typo="Typo.h4">@_stats.EquipamentosEmUso</MudText>
+                </MudStack>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+
     @* Card: Alertas de Atenção (Vulnerabilidade) *@
-    <MudItem xs="12" sm="6" md="4">
+    <MudItem xs="12" sm="6" md="3">
         <MudCard Elevation="2" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-error);">
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudIcon Icon="@Icons.Material.Filled.Warning" Color="Color.Error" Size="Size.Large" />

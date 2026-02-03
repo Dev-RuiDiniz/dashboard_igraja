@@ -73,7 +73,7 @@
             </MudChip>
         </MudTd>
         <MudTd>
-            <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" Title="Ver Detalhes" />
+            <MudIconButton Icon="@Icons.Material.Filled.Visibility" Color="Color.Info" Size="Size.Small" Title="Ver Detalhes" OnClick="() => OpenDialog(context)" />
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small" Title="Editar" />
         </MudTd>
     </RowTemplate>
@@ -96,12 +96,18 @@
     }
 
     // Método disparado pelo botão "Nova Família"
-    private async Task OpenDialog()
+    private Task OpenDialog() => OpenDialog(null);
+
+    private async Task OpenDialog(Familia? familia)
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        
-        // Exibe o modal FamiliaDialog (que criamos anteriormente)
-        var dialog = await DialogService.ShowAsync<FamiliaDialog>("Cadastrar Nova Família", options);
+        var parameters = new DialogParameters();
+        if (familia is not null)
+        {
+            parameters.Add("FamiliaSelecionada", familia);
+        }
+
+        var dialog = await DialogService.ShowAsync<FamiliaDialog>("Cadastro de Família", parameters, options);
         var result = await dialog.Result;
 
         // Se o usuário salvou com sucesso no modal, recarregamos a lista

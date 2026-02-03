@@ -1,10 +1,13 @@
+@using System.Linq
 @using MudBlazor
 @using MudBlazor.Services
 @using IgrejaSocial.Domain.Entities
 @using IgrejaSocial.Domain.Enums
 @using IgrejaSocial.Domain.Models
+@using IgrejaSocial.Web.Models
 
 @inject FamiliaService FamiliaService
+@inject EmprestimoService EmprestimoService
 @inject ISnackbar Snackbar
 
 <MudDialog>
@@ -170,6 +173,35 @@
                         </RowTemplate>
                     </MudTable>
                 </MudTabPanel>
+
+                @* ABA 3: HISTÓRICO *@
+                <MudTabPanel Text="Histórico" Icon="@Icons.Material.Filled.History">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.subtitle1">Equipamentos emprestados</MudText>
+
+                        <MudTable Items="@_historico" Dense="true" Hover="true" Striped="true" Elevation="0">
+                            <HeaderContent>
+                                <MudTh>Equipamento</MudTh>
+                                <MudTh>Empréstimo</MudTh>
+                                <MudTh>Previsão</MudTh>
+                                <MudTh>Devolução</MudTh>
+                                <MudTh>Estado</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@context.CodigoPatrimonio</MudTd>
+                                <MudTd>@context.DataEmprestimo.ToString("dd/MM/yyyy")</MudTd>
+                                <MudTd>@context.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</MudTd>
+                                <MudTd>@(context.DataDevolucao?.ToString("dd/MM/yyyy") ?? "-")</MudTd>
+                                <MudTd>@(context.EstadoConservacao?.ToString() ?? "-")</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+
+                        @if (!_historico.Any())
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">Nenhum empréstimo registrado.</MudText>
+                        }
+                    </MudStack>
+                </MudTabPanel>
             </MudTabs>
         </MudForm>
     </DialogContent>
@@ -190,7 +222,33 @@
     private DateTime? _dataNascimentoMembro = DateTime.Today.AddYears(-20);
     private DateTime? _dataNascimentoResponsavel = DateTime.Today.AddYears(-30);
     
+    [Parameter] public Familia? FamiliaSelecionada { get; set; }
+
     private Familia _familia = new() { Membros = new List<MembroFamilia>() };
+    private List<HistoricoEmprestimoDto> _historico = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (FamiliaSelecionada is not null)
+        {
+            _familia = FamiliaSelecionada;
+            await CarregarHistoricoAsync();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (FamiliaSelecionada is not null && _familia.Id != FamiliaSelecionada.Id)
+        {
+            _familia = FamiliaSelecionada;
+            await CarregarHistoricoAsync();
+        }
+    }
+
+    private async Task CarregarHistoricoAsync()
+    {
+        _historico = await EmprestimoService.ListarHistoricoFamiliaAsync(_familia.Id);
+    }
     private MembroFamilia _novoMembro = new();
 
     private void AdicionarMembro() {

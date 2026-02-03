@@ -20,4 +20,11 @@ namespace IgrejaSocial.Domain.Enums
         NecessitaManutencao,
         Danificado
     }
+
+    public enum EstadoConservacao
+    {
+        Novo,
+        Bom,
+        PrecisaReparo
+    }
 }
