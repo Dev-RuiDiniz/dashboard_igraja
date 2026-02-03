@@ -26,6 +26,9 @@ namespace IgrejaSocial.Domain.Entities
         [DataType(DataType.Date)]
         public DateTime DataPrevistaDevolucao { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTime? DataDevolucaoReal { get; set; }
+
         [StringLength(500)]
         public string Observacoes { get; set; } = string.Empty;
     }

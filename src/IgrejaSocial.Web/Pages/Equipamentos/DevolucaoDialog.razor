@@ -1,0 +1,89 @@
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Enums
+@using IgrejaSocial.Domain.Models
+@inject EmprestimoService EmprestimoService
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.subtitle1">Equipamento</MudText>
+            <MudText Typo="Typo.body2">@FormatarEquipamento(EquipamentoSelecionado)</MudText>
+
+            <MudDatePicker Label="Data real da devolução"
+                           @bind-Date="_dataDevolucao"
+                           MaxDate="@DateTime.Today"
+                           Dense="true"
+                           Required="true"
+                           Validation="ValidarDataDevolucao" />
+
+            <MudSelect T="StatusEquipamento" Label="Estado de conservação" @bind-Value="_estadoConservacao" Dense="true">
+                @foreach (var opcao in _estadosConservacao)
+                {
+                    <MudSelectItem Value="@opcao">@ObterLabelEstado(opcao)</MudSelectItem>
+                }
+            </MudSelect>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="RegistrarDevolucao">Confirmar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Equipamento? EquipamentoSelecionado { get; set; }
+
+    private DateTime? _dataDevolucao = DateTime.Today;
+    private StatusEquipamento _estadoConservacao = StatusEquipamento.Bom;
+    private readonly List<StatusEquipamento> _estadosConservacao = new()
+    {
+        StatusEquipamento.Novo,
+        StatusEquipamento.Bom,
+        StatusEquipamento.NecessitaManutencao
+    };
+
+    private static string FormatarEquipamento(Equipamento? equipamento)
+        => equipamento is null ? string.Empty : $"{equipamento.CodigoPatrimonio} - {equipamento.Descricao}";
+
+    private static string ObterLabelEstado(StatusEquipamento estado)
+        => estado == StatusEquipamento.NecessitaManutencao ? "Precisa reparo" : estado.ToString();
+
+    private string? ValidarDataDevolucao(DateTime? data)
+    {
+        if (!data.HasValue)
+        {
+            return "Informe a data de devolução.";
+        }
+
+        if (data.Value.Date > DateTime.Today)
+        {
+            return "A data de devolução não pode ser futura.";
+        }
+
+        return null;
+    }
+
+    private async Task RegistrarDevolucao()
+    {
+        if (EquipamentoSelecionado is null || !_dataDevolucao.HasValue)
+        {
+            return;
+        }
+
+        var request = new DevolucaoEquipamentoRequest
+        {
+            EquipamentoId = EquipamentoSelecionado.Id,
+            DataDevolucaoReal = _dataDevolucao.Value,
+            EstadoConservacao = _estadoConservacao
+        };
+
+        var sucesso = await EmprestimoService.RegistrarDevolucaoAsync(request);
+        if (sucesso)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+    }
+
+    private void Cancelar() => MudDialog.Cancel();
+}

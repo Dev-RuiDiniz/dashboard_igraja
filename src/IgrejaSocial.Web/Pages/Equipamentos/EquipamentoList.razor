@@ -55,9 +55,15 @@
                     Emprestar
                 </MudButton>
             }
+            else if (!context.IsDisponivel)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Info" Size="Size.Small" OnClick="() => AbrirDevolucaoDialog(context)">
+                    Registrar devolução
+                </MudButton>
+            }
             else
             {
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Indisponível</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Em manutenção</MudText>
             }
         </MudTd>
     </RowTemplate>
@@ -129,6 +135,23 @@
         };
 
         var dialog = await DialogService.ShowAsync<EmprestimoDialog>("Registrar Empréstimo", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await CarregarEquipamentosAsync();
+        }
+    }
+
+    private async Task AbrirDevolucaoDialog(Equipamento equipamento)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters
+        {
+            { "EquipamentoSelecionado", equipamento }
+        };
+
+        var dialog = await DialogService.ShowAsync<DevolucaoDialog>("Registrar devolução", parameters, options);
         var result = await dialog.Result;
 
         if (!result.Canceled)
