@@ -44,6 +44,7 @@
     <HeaderContent>
         <MudTh>Responsável</MudTh>
         <MudTh>CPF</MudTh>
+        <MudTh>RG</MudTh>
         <MudTh>Endereço</MudTh>
         <MudTh>Bairro</MudTh>
         <MudTh>Renda Per Capita</MudTh>
@@ -58,6 +59,7 @@
                 ? string.Format("{0:000\\.000\\.000-00}", cpf) 
                 : context.CpfResponsavel)
         </MudTd>
+        <MudTd DataLabel="RG">@context.RgResponsavel</MudTd>
         <MudTd DataLabel="Endereço">@context.Endereco</MudTd>
         <MudTd DataLabel="Bairro">@GetBairro(context.Endereco)</MudTd>
         <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
@@ -116,7 +118,8 @@
     {
         if (!string.IsNullOrWhiteSpace(_searchCpfRg))
         {
-            if (!(familia.CpfResponsavel?.Contains(_searchCpfRg, StringComparison.OrdinalIgnoreCase) ?? false))
+            if (!(familia.CpfResponsavel?.Contains(_searchCpfRg, StringComparison.OrdinalIgnoreCase) ?? false) &&
+                !(familia.RgResponsavel?.Contains(_searchCpfRg, StringComparison.OrdinalIgnoreCase) ?? false))
             {
                 return false;
             }

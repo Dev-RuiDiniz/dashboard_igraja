@@ -8,8 +8,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// 1. Configuração do HttpClient (Mova para cima para melhor organização)
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// 1. Configuração do HttpClient com handler de notificação global
+builder.Services.AddScoped<SnackbarDelegatingHandler>();
+builder.Services.AddHttpClient("Api", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpMessageHandler<SnackbarDelegatingHandler>();
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
 
 // 2. Registro do MudBlazor
 builder.Services.AddMudServices();

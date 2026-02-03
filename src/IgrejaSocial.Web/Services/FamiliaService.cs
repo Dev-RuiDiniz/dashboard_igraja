@@ -24,7 +24,6 @@ namespace IgrejaSocial.Web.Services
             }
             catch (Exception)
             {
-                _snackbar.Add("Erro ao carregar a lista de famílias.", Severity.Error);
                 return new();
             }
         }
@@ -40,13 +39,10 @@ namespace IgrejaSocial.Web.Services
                     _snackbar.Add("Cadastro realizado com sucesso!", Severity.Success);
                     return true;
                 }
-
-                _snackbar.Add("Erro ao salvar cadastro. Verifique os dados.", Severity.Warning);
                 return false;
             }
             catch
             {
-                _snackbar.Add("Falha na comunicação com o servidor.", Severity.Error);
                 return false;
             }
         }
@@ -70,7 +66,6 @@ namespace IgrejaSocial.Web.Services
             }
             catch
             {
-                _snackbar.Add("Erro ao consultar o serviço de CEP.", Severity.Error);
                 return null;
             }
         }

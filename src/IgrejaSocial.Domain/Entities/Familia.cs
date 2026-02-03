@@ -21,6 +21,9 @@ namespace IgrejaSocial.Domain.Entities
         [Cpf]
         public string CpfResponsavel { get; set; } = string.Empty;
 
+        [StringLength(20, ErrorMessage = "O RG deve ter no máximo 20 caracteres.")]
+        public string? RgResponsavel { get; set; }
+
         [Required]
         public TipoMoradia Residencia { get; set; }
 

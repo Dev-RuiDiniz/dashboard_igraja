@@ -5,6 +5,7 @@ namespace IgrejaSocial.Application.DTOs
         public Guid Id { get; set; }
         public string NomeResponsavel { get; set; }
         public string CpfResponsavel { get; set; }
+        public string? RgResponsavel { get; set; }
         public string Endereco { get; set; }
         public int? IdadeResponsavel { get; set; }
         public decimal RendaPerCapita { get; set; } // Valor calculado

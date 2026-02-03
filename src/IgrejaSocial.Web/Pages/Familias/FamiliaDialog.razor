@@ -51,6 +51,10 @@
                                           @bind-Value="_familia.CpfResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">
+                            <MudTextField T="string" Label="RG" Mask="@(new PatternMask("00.000.000-0"))"
+                                          @bind-Value="_familia.RgResponsavel" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
                             <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">

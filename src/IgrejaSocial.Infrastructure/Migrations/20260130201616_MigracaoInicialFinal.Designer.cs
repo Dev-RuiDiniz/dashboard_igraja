@@ -74,6 +74,10 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RgResponsavel")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("TEXT");
 

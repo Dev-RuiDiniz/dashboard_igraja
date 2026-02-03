@@ -37,6 +37,7 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NomeResponsavel = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     CpfResponsavel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RgResponsavel = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Residencia = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false),
