@@ -1,4 +1,5 @@
 @page "/familias"
+@using System.Globalization
 @using IgrejaSocial.Domain.Entities
 @inject IDialogService DialogService
 @inject FamiliaService FamiliaService
@@ -19,20 +20,33 @@
         </MudButton>
 
         <MudSpacer />
-        
-        @* CAMPO DE BUSCA: Filtra a tabela localmente em tempo real *@
-        <MudTextField @bind-Value="_searchString" 
-                      Placeholder="Buscar por Nome, CPF ou Endereço..." 
-                      Adornment="Adornment.Start" 
-                      AdornmentIcon="@Icons.Material.Filled.Search" 
-                      IconSize="Size.Medium" 
-                      Class="mt-0" />
+
+        @* FILTROS: CPF/RG, Bairro e Renda *@
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mt-0">
+            <MudTextField @bind-Value="_searchCpfRg"
+                          Placeholder="Buscar por CPF/RG"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Badge"
+                          IconSize="Size.Medium" />
+            <MudTextField @bind-Value="_searchBairro"
+                          Placeholder="Buscar por Bairro"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.LocationOn"
+                          IconSize="Size.Medium" />
+            <MudTextField @bind-Value="_searchRenda"
+                          Placeholder="Buscar por Renda"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Payments"
+                          IconSize="Size.Medium" />
+        </MudStack>
     </ToolBarContent>
 
     <HeaderContent>
         <MudTh>Responsável</MudTh>
         <MudTh>CPF</MudTh>
+        <MudTh>RG</MudTh>
         <MudTh>Endereço</MudTh>
+        <MudTh>Bairro</MudTh>
         <MudTh>Renda Per Capita</MudTh>
         <MudTh>Vulnerabilidade</MudTh>
         <MudTh>Ações</MudTh>
@@ -45,15 +59,17 @@
                 ? string.Format("{0:000\\.000\\.000-00}", cpf) 
                 : context.CpfResponsavel)
         </MudTd>
+        <MudTd DataLabel="RG">@context.RgResponsavel</MudTd>
         <MudTd DataLabel="Endereço">@context.Endereco</MudTd>
+        <MudTd DataLabel="Bairro">@GetBairro(context.Endereco)</MudTd>
         <MudTd DataLabel="Renda">@context.RendaPerCapita.ToString("C")</MudTd>
         <MudTd DataLabel="Status">
-            @* CHIP DINÂMICO: Muda de cor e texto baseado na propriedade calculada da entidade *@
-            <MudChip T="string" 
-                     Color="@(context.IsVulneravel ? Color.Error : Color.Success)" 
-                     Size="Size.Small" 
+            @* CHIP DINÂMICO: Verde/Amarelo/Vermelho baseado na renda per capita *@
+            <MudChip T="string"
+                     Color="@GetVulnerabilidadeColor(context)"
+                     Size="Size.Small"
                      Variant="Variant.Text">
-                @(context.IsVulneravel ? "Vulnerável" : "Estável")
+                @GetVulnerabilidadeLabel(context)
             </MudChip>
         </MudTd>
         <MudTd>
@@ -68,7 +84,9 @@
 </MudTable>
 
 @code {
-    private string _searchString = "";
+    private string _searchCpfRg = "";
+    private string _searchBairro = "";
+    private string _searchRenda = "";
     private List<Familia> _familias = new();
 
     // Carrega os dados da API ao iniciar a página
@@ -94,17 +112,76 @@
     }
 
     // Lógica de filtro da MudTable
-    private bool FilterFunc1(Familia familia) => FilterFunc(familia, _searchString);
+    private bool FilterFunc1(Familia familia) => FilterFunc(familia);
 
-    private bool FilterFunc(Familia familia, string searchString)
+    private bool FilterFunc(Familia familia)
     {
-        if (string.IsNullOrWhiteSpace(searchString)) return true;
-        
-        // Busca ignorando maiúsculas/minúsculas e tratando valores nulos
-        if (familia.NomeResponsavel?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        if (familia.CpfResponsavel?.Contains(searchString) ?? false) return true;
-        if (familia.Endereco?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        
-        return false;
+        if (!string.IsNullOrWhiteSpace(_searchCpfRg))
+        {
+            if (!(familia.CpfResponsavel?.Contains(_searchCpfRg, StringComparison.OrdinalIgnoreCase) ?? false) &&
+                !(familia.RgResponsavel?.Contains(_searchCpfRg, StringComparison.OrdinalIgnoreCase) ?? false))
+            {
+                return false;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_searchBairro))
+        {
+            var bairro = GetBairro(familia.Endereco);
+            if (!(bairro?.Contains(_searchBairro, StringComparison.OrdinalIgnoreCase) ?? false) &&
+                !(familia.Endereco?.Contains(_searchBairro, StringComparison.OrdinalIgnoreCase) ?? false))
+            {
+                return false;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_searchRenda))
+        {
+            var rendaOk = false;
+            var rendaFormatada = familia.RendaPerCapita.ToString("C", CultureInfo.GetCultureInfo("pt-BR"));
+            if (rendaFormatada.Contains(_searchRenda, StringComparison.OrdinalIgnoreCase))
+            {
+                rendaOk = true;
+            }
+
+            if (!rendaOk &&
+                decimal.TryParse(_searchRenda, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-BR"), out var rendaFiltro))
+            {
+                rendaOk = familia.RendaPerCapita >= rendaFiltro;
+            }
+
+            if (!rendaOk)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string GetBairro(string endereco)
+    {
+        if (string.IsNullOrWhiteSpace(endereco)) return string.Empty;
+
+        var partes = endereco.Split(',');
+        if (partes.Length < 2) return string.Empty;
+
+        var possivelBairro = partes[1].Trim();
+        var separador = possivelBairro.IndexOf(" - ", StringComparison.Ordinal);
+        return separador > 0 ? possivelBairro[..separador].Trim() : possivelBairro;
+    }
+
+    private static Color GetVulnerabilidadeColor(Familia familia)
+    {
+        if (familia.RendaPerCapita <= 218) return Color.Error;
+        if (familia.IsVulneravel) return Color.Warning;
+        return Color.Success;
+    }
+
+    private static string GetVulnerabilidadeLabel(Familia familia)
+    {
+        if (familia.RendaPerCapita <= 218) return "Extrema Pobreza";
+        if (familia.IsVulneravel) return "Vulnerável";
+        return "Estável";
     }
 }

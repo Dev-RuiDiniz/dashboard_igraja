@@ -38,31 +38,62 @@
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@_success">
             <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
-                
+
                 @* ABA 1: DADOS DO RESPONSÁVEL (Task 7) *@
                 <MudTabPanel Text="Responsável" Icon="@Icons.Material.Filled.Person">
                     <MudGrid>
                         <MudItem xs="12" md="8">
-                            <MudTextField T="string" Label="Nome do Responsável" Required="true" 
+                            <MudTextField T="string" Label="Nome do Responsável" Required="true"
                                           @bind-Value="_familia.NomeResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudTextField T="string" Label="CPF" Mask="@(new PatternMask("000.000.000-00"))" 
+                            <MudTextField T="string" Label="CPF" Mask="@(new PatternMask("000.000.000-00"))"
                                           @bind-Value="_familia.CpfResponsavel" Variant="Variant.Outlined" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <MudTextField T="string" Label="CEP" @bind-Value="_cepBusca" TextChanged="OnCepChanged" 
+                            <MudTextField T="string" Label="RG" Mask="@(new PatternMask("00.000.000-0"))"
+                                          @bind-Value="_familia.RgResponsavel" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoResponsavel" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudTextField T="string" Label="Telefone" Mask="@(new PatternMask("(00) 00000-0000"))"
+                                          @bind-Value="_familia.TelefoneContato" Variant="Variant.Outlined" />
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudSelect T="TipoMoradia" Label="Tipo de Moradia" @bind-Value="_familia.Residencia" Variant="Variant.Outlined">
+                                @foreach (TipoMoradia item in Enum.GetValues(typeof(TipoMoradia)))
+                                {
+                                    <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudSelect T="StatusAcompanhamento" Label="Status do Acompanhamento" @bind-Value="_familia.Status" Variant="Variant.Outlined">
+                                @foreach (StatusAcompanhamento item in Enum.GetValues(typeof(StatusAcompanhamento)))
+                                {
+                                    <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudTextField T="string" Label="CEP" @bind-Value="_cepBusca" TextChanged="OnCepChanged"
                                           Mask="@(new PatternMask("00000-000"))" Variant="Variant.Outlined"
-                                          Adornment="Adornment.End" 
+                                          Adornment="Adornment.End"
                                           AdornmentIcon="@(_loadingCep ? Icons.Material.Filled.HourglassEmpty : Icons.Material.Filled.Search)" />
                         </MudItem>
                         <MudItem xs="12" md="8">
-                            <MudTextField T="string" Label="Endereço Completo" @bind-Value="_familia.Endereco" 
+                            <MudTextField T="string" Label="Endereço Completo" @bind-Value="_familia.Endereco"
                                           Variant="Variant.Outlined" Required="true" />
                         </MudItem>
                         <MudItem xs="12" md="6">
-                            <MudNumericField T="decimal" Label="Renda Base do Responsável" @bind-Value="_familia.RendaFamiliarTotal" 
-                                            Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentText="R$" />
+                            <MudNumericField T="decimal" Label="Renda Base do Responsável" @bind-Value="_familia.RendaFamiliarTotal"
+                                             Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentText="R$" />
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudTextField T="string" Label="Observações" Lines="3" TextArea="true"
+                                          @bind-Value="_familia.Observacoes" Variant="Variant.Outlined" />
                         </MudItem>
                     </MudGrid>
                 </MudTabPanel>
@@ -157,6 +188,7 @@
     private bool _loadingCep;
     private string _cepBusca = string.Empty;
     private DateTime? _dataNascimentoMembro = DateTime.Today.AddYears(-20);
+    private DateTime? _dataNascimentoResponsavel = DateTime.Today.AddYears(-30);
     
     private Familia _familia = new() { Membros = new List<MembroFamilia>() };
     private MembroFamilia _novoMembro = new();
@@ -202,6 +234,15 @@
 
     private async Task Submit() {
         if (form is not null) await form.Validate();
-        if (form?.IsValid == true) MudDialog?.Close(DialogResult.Ok(_familia));
+        if (form?.IsValid == true)
+        {
+            _familia.DataNascimentoResponsavel = _dataNascimentoResponsavel;
+
+            var sucesso = await FamiliaService.CriarFamiliaAsync(_familia);
+            if (sucesso)
+            {
+                MudDialog?.Close(DialogResult.Ok(_familia));
+            }
+        }
     }
 }
