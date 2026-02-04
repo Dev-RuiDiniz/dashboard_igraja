@@ -35,6 +35,13 @@ namespace IgrejaSocial.Domain.Entities
 
         public bool PossuiDeficiencia { get; set; }
 
+        [StringLength(30)]
+        public string? NumeroCadUnico { get; set; }
+
+        public bool RecebeBolsaFamilia { get; set; }
+
+        public bool RecebeBpc { get; set; }
+
         [Required]
         public Guid FamiliaId { get; set; }
 

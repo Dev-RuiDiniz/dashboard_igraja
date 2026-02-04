@@ -31,5 +31,8 @@ builder.Services.AddScoped<EquipamentoService>();
 builder.Services.AddScoped<EmprestimoService>();
 builder.Services.AddScoped<CestaService>();
 builder.Services.AddScoped<RelatorioService>();
+builder.Services.AddScoped<PessoaSituacaoRuaService>();
+builder.Services.AddScoped<DoacaoAvulsaService>();
+builder.Services.AddScoped<VisitaService>();
 
 await builder.Build().RunAsync();

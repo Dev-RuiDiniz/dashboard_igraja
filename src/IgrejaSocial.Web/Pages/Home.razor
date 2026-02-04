@@ -122,6 +122,44 @@
 <MudGrid Class="mt-6">
     <MudItem xs="12">
         <MudCard Elevation="2" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Alertas de Visitas Domiciliares</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Solicitações pendentes ou famílias sem visita recente.
+                </MudText>
+                <MudTable Items="@_visitasAtrasadas" Dense="true" Hover="true" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Responsável</MudTh>
+                        <MudTh>Solicitação</MudTh>
+                        <MudTh>Última Visita</MudTh>
+                        <MudTh>Dias</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Responsável">@context.NomeResponsavel</MudTd>
+                        <MudTd DataLabel="Solicitação">
+                            @(context.DataSolicitacao.HasValue
+                                ? context.DataSolicitacao.Value.ToString("dd/MM/yyyy")
+                                : "Sem solicitação")
+                        </MudTd>
+                        <MudTd DataLabel="Última Visita">
+                            @(context.UltimaVisitaConcluida.HasValue
+                                ? context.UltimaVisitaConcluida.Value.ToString("dd/MM/yyyy")
+                                : "Sem registro")
+                        </MudTd>
+                        <MudTd DataLabel="Dias">@context.DiasEmAberto</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">Nenhuma visita atrasada no momento.</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudStack>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<MudGrid Class="mt-6">
+    <MudItem xs="12">
+        <MudCard Elevation="2" Class="pa-4">
             <MudStack Row="true" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
                 <MudStack Spacing="1">
                     <MudText Typo="Typo.h6">Relatório Mensal</MudText>
@@ -129,10 +167,16 @@
                         @_relatorio.Mes.ToString("D2")/@_relatorio.Ano
                     </MudText>
                 </MudStack>
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
-                           OnClick="DownloadCestasAtendidas">
-                    Exportar atendimentos do mês
-                </MudButton>
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
+                               OnClick="DownloadCestasAtendidas">
+                        Exportar atendimentos do mês
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.PictureAsPdf"
+                               OnClick="DownloadRelatorioKpis">
+                        Baixar KPIs em PDF
+                    </MudButton>
+                </MudStack>
             </MudStack>
 
             <MudDivider Class="my-3" />
@@ -159,6 +203,7 @@
     private DashboardStatsDto _stats = new();
     private List<FamiliaAtencaoDto> _familiasAtencao = new();
     private List<RankingVulnerabilidadeDto> _rankingVulnerabilidade = new();
+    private List<VisitaAtrasadaDto> _visitasAtrasadas = new();
     private RelatorioMensalDto _relatorio = new();
 
     protected override async Task OnInitializedAsync()
@@ -166,6 +211,7 @@
         _stats = await DashboardService.GetResumoAsync();
         _familiasAtencao = await DashboardService.GetFamiliasAtencaoAsync();
         _rankingVulnerabilidade = await DashboardService.GetRankingVulnerabilidadeAsync(5);
+        _visitasAtrasadas = await DashboardService.GetVisitasAtrasadasAsync();
         var hoje = DateTime.Today;
         _relatorio = await RelatorioService.GetRelatorioMensalAsync(hoje.Month, hoje.Year);
     }
@@ -174,5 +220,10 @@
     {
         var hoje = DateTime.Today;
         await RelatorioService.DownloadCestasAtendidasCsvAsync(hoje.Month, hoje.Year);
+    }
+
+    private async Task DownloadRelatorioKpis()
+    {
+        await RelatorioService.DownloadRelatorioKpisAsync(6);
     }
 }

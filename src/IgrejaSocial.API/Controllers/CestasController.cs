@@ -53,6 +53,7 @@ namespace IgrejaSocial.API.Controllers
                 TipoAtendimento = TipoAtendimento.CestaBasica,
                 DataEntrega = dataEntrega,
                 DataEmprestimo = dataEntrega,
+                UsuarioEntrega = User?.Identity?.Name ?? "Sistema",
                 Observacoes = request.Observacoes ?? string.Empty
             };
 

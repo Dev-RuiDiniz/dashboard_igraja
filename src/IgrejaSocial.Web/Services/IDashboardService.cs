@@ -7,5 +7,6 @@ namespace IgrejaSocial.Web.Services
         Task<DashboardStatsDto> GetResumoAsync();
         Task<List<FamiliaAtencaoDto>> GetFamiliasAtencaoAsync();
         Task<List<RankingVulnerabilidadeDto>> GetRankingVulnerabilidadeAsync(int limite);
+        Task<List<VisitaAtrasadaDto>> GetVisitasAtrasadasAsync();
     }
 }

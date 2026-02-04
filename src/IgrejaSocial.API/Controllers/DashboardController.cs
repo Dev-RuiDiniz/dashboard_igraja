@@ -108,5 +108,56 @@ namespace IgrejaSocial.API.Controllers
 
             return Ok(resultado);
         }
+
+        /// <summary>
+        /// Lista famílias com visitas solicitadas ou com atraso de acompanhamento.
+        /// </summary>
+        [HttpGet("visitas-atrasadas")]
+        public async Task<ActionResult<IEnumerable<VisitaAtrasadaDto>>> GetVisitasAtrasadas()
+        {
+            var limiteDias = 60;
+            var limiteData = DateTime.Today.AddDays(-limiteDias);
+
+            var familias = await _context.Familias.AsNoTracking().ToListAsync();
+            var visitas = await _context.RegistrosVisitas
+                .AsNoTracking()
+                .ToListAsync();
+
+            var visitasAbertas = visitas
+                .Where(v => !v.DataConclusao.HasValue)
+                .GroupBy(v => v.FamiliaId)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(v => v.DataSolicitacao).First());
+
+            var ultimasConclusoes = visitas
+                .Where(v => v.DataConclusao.HasValue)
+                .GroupBy(v => v.FamiliaId)
+                .ToDictionary(g => g.Key, g => g.Max(v => v.DataConclusao));
+
+            var resultado = familias
+                .Select(familia =>
+                {
+                    visitasAbertas.TryGetValue(familia.Id, out var visitaAberta);
+                    ultimasConclusoes.TryGetValue(familia.Id, out var ultimaConclusao);
+                    var referencia = visitaAberta?.DataSolicitacao ?? ultimaConclusao ?? familia.DataCadastro;
+                    var dias = (DateTime.Today - referencia.Date).Days;
+
+                    return new VisitaAtrasadaDto
+                    {
+                        FamiliaId = familia.Id,
+                        NomeResponsavel = familia.NomeResponsavel,
+                        DataSolicitacao = visitaAberta?.DataSolicitacao,
+                        UltimaVisitaConcluida = ultimaConclusao,
+                        DiasEmAberto = dias
+                    };
+                })
+                .Where(dto =>
+                    dto.DataSolicitacao.HasValue ||
+                    (!dto.UltimaVisitaConcluida.HasValue && dto.DiasEmAberto >= limiteDias) ||
+                    (dto.UltimaVisitaConcluida.HasValue && dto.UltimaVisitaConcluida.Value.Date < limiteData))
+                .OrderByDescending(dto => dto.DiasEmAberto)
+                .ToList();
+
+            return Ok(resultado);
+        }
     }
 }

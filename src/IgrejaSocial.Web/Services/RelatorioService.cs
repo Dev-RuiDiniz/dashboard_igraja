@@ -50,5 +50,28 @@ namespace IgrejaSocial.Web.Services
                 return false;
             }
         }
+
+        public async Task<bool> DownloadRelatorioKpisAsync(int meses)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/relatorios/kpis/pdf?meses={meses}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return false;
+                }
+
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = $"relatorio-kpis-{DateTime.Today:yyyy-MM-dd}.pdf";
+                var base64 = Convert.ToBase64String(bytes);
+
+                await _jsRuntime.InvokeVoidAsync("downloadFileFromBytes", fileName, "application/pdf", base64);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

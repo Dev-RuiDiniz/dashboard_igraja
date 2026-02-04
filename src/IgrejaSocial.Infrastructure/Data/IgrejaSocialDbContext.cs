@@ -15,6 +15,9 @@ namespace IgrejaSocial.Infrastructure.Data
         public DbSet<MembroFamilia> Membros { get; set; }
         public DbSet<Equipamento> Equipamentos { get; set; }
         public DbSet<RegistroAtendimento> RegistrosAtendimento { get; set; }
+        public DbSet<PessoaEmSituacaoRua> PessoasEmSituacaoRua { get; set; }
+        public DbSet<DoacaoAvulsa> DoacoesAvulsas { get; set; }
+        public DbSet<RegistroVisita> RegistrosVisitas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +47,7 @@ namespace IgrejaSocial.Infrastructure.Data
                 entity.Property(m => m.Nome).IsRequired().HasMaxLength(150);
                 entity.Property(m => m.Cpf).HasMaxLength(11);
                 entity.Property(m => m.RendaIndividual).HasPrecision(18, 2);
+                entity.Property(m => m.NumeroCadUnico).HasMaxLength(30);
             });
 
             // 3. Configuração: Equipamento
@@ -60,6 +64,7 @@ namespace IgrejaSocial.Infrastructure.Data
             {
                 entity.HasKey(r => r.Id);
                 entity.Property(r => r.Observacoes).HasMaxLength(500);
+                entity.Property(r => r.UsuarioEntrega).HasMaxLength(150);
                 entity.Property(r => r.TipoAtendimento).IsRequired();
 
                 entity.HasOne(r => r.Familia)
@@ -74,7 +79,45 @@ namespace IgrejaSocial.Infrastructure.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // 5. SEED DE DADOS (Tarefa 10)
+            // 5. Configuração: Pessoa em Situação de Rua
+            modelBuilder.Entity<PessoaEmSituacaoRua>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.HasIndex(p => p.Cpf).IsUnique();
+                entity.Property(p => p.Nome).IsRequired().HasMaxLength(150);
+                entity.Property(p => p.Rg).HasMaxLength(20);
+                entity.Property(p => p.LocalReferencia).HasMaxLength(255);
+                entity.Property(p => p.Observacoes).HasMaxLength(500);
+            });
+
+            // 6. Configuração: Doações Avulsas
+            modelBuilder.Entity<DoacaoAvulsa>(entity =>
+            {
+                entity.HasKey(d => d.Id);
+                entity.Property(d => d.Item).IsRequired().HasMaxLength(150);
+                entity.Property(d => d.UnidadeMedida).HasMaxLength(50);
+                entity.Property(d => d.UsuarioRegistro).HasMaxLength(150);
+                entity.Property(d => d.Observacoes).HasMaxLength(500);
+                entity.HasOne(d => d.PessoaEmSituacaoRua)
+                    .WithMany()
+                    .HasForeignKey(d => d.PessoaEmSituacaoRuaId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // 7. Configuração: Registro de Visitas
+            modelBuilder.Entity<RegistroVisita>(entity =>
+            {
+                entity.HasKey(v => v.Id);
+                entity.Property(v => v.Solicitante).IsRequired().HasMaxLength(150);
+                entity.Property(v => v.Executor).HasMaxLength(150);
+                entity.Property(v => v.Observacoes).HasMaxLength(500);
+                entity.HasOne(v => v.Familia)
+                    .WithMany()
+                    .HasForeignKey(v => v.FamiliaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // 8. SEED DE DADOS (Tarefa 10)
             SeedDados(modelBuilder);
         }
 

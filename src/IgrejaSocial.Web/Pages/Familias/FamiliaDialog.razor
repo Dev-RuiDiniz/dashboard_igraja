@@ -170,6 +170,18 @@
                                 <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimentoMembro" Variant="Variant.Outlined"
                                                Margin="Margin.Dense" Disabled="@_isSomenteLeitura" />
                             </MudItem>
+                            <MudItem xs="12" md="4">
+                                <MudTextField T="string" Label="CadÚnico (NIS)" @bind-Value="_novoMembro.NumeroCadUnico"
+                                              Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="@_isSomenteLeitura" />
+                            </MudItem>
+                            <MudItem xs="6" md="4">
+                                <MudSwitch T="bool" Label="Bolsa Família" Color="Color.Primary"
+                                           @bind-Checked="_novoMembro.RecebeBolsaFamilia" Disabled="@_isSomenteLeitura" />
+                            </MudItem>
+                            <MudItem xs="6" md="4">
+                                <MudSwitch T="bool" Label="BPC" Color="Color.Primary"
+                                           @bind-Checked="_novoMembro.RecebeBpc" Disabled="@_isSomenteLeitura" />
+                            </MudItem>
 
                             <MudItem xs="12" Class="d-flex justify-end">
                                 <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" 
@@ -197,12 +209,18 @@
                             <MudTh>Nome</MudTh>
                             <MudTh>Parentesco</MudTh>
                             <MudTh>Renda</MudTh>
+                            <MudTh>Benefícios</MudTh>
                             <MudTh>Ação</MudTh>
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd>@context.Nome</MudTd>
                             <MudTd>@context.Parentesco</MudTd>
                             <MudTd>@context.RendaIndividual.ToString("C")</MudTd>
+                            <MudTd>
+                                @($"{(string.IsNullOrWhiteSpace(context.NumeroCadUnico) ? "Sem CadÚnico" : "CadÚnico")}, " +
+                                  $"{(context.RecebeBolsaFamilia ? "Bolsa Família" : "Sem Bolsa")}, " +
+                                  $"{(context.RecebeBpc ? "BPC" : "Sem BPC")}")
+                            </MudTd>
                             <MudTd>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" 
                                                Size="Size.Small" OnClick="@(() => RemoverMembro(context))" Disabled="@_isSomenteLeitura" />
@@ -234,6 +252,24 @@
                         </NoRecordsContent>
                     </MudTable>
                 </MudTabPanel>
+
+                <MudTabPanel Text="Linha do Tempo" Icon="@Icons.Material.Filled.Timeline">
+                    <MudTable Items="@_historicoUnificado" Hover="true" Dense="true" Elevation="0" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Tipo</MudTh>
+                            <MudTh>Data</MudTh>
+                            <MudTh>Descrição</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.Tipo</MudTd>
+                            <MudTd>@context.Data.ToString("dd/MM/yyyy")</MudTd>
+                            <MudTd>@context.Descricao</MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2">Nenhum atendimento registrado.</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudTabPanel>
             </MudTabs>
         </MudForm>
     </DialogContent>
@@ -261,6 +297,7 @@
     private Familia _familia = new() { Membros = new List<MembroFamilia>() };
     private MembroFamilia _novoMembro = new();
     private List<RegistroAtendimentoHistoricoDto> _historico = new();
+    private List<HistoricoUnificadoDto> _historicoUnificado = new();
     private bool _isSomenteLeitura;
     private string _tituloDialogo = "Cadastro de Família";
 
@@ -273,6 +310,7 @@
             _isSomenteLeitura = true;
             _tituloDialogo = "Detalhes da Família";
             _historico = await EmprestimoService.GetHistoricoFamiliaAsync(_familia.Id);
+            _historicoUnificado = await FamiliaService.GetHistoricoUnificadoAsync(_familia.Id);
         }
     }
 
@@ -285,7 +323,10 @@
                 RendaIndividual = _novoMembro.RendaIndividual,
                 NivelEscolar = _novoMembro.NivelEscolar,
                 SituacaoTrabalho = _novoMembro.SituacaoTrabalho,
-                DataNascimento = _dataNascimentoMembro ?? DateTime.Today
+                DataNascimento = _dataNascimentoMembro ?? DateTime.Today,
+                NumeroCadUnico = _novoMembro.NumeroCadUnico,
+                RecebeBolsaFamilia = _novoMembro.RecebeBolsaFamilia,
+                RecebeBpc = _novoMembro.RecebeBpc
             });
             
             _novoMembro = new MembroFamilia(); 

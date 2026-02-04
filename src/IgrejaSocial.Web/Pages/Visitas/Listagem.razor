@@ -1,0 +1,136 @@
+@page "/visitas"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Models
+@using MudBlazor
+
+@inject FamiliaService FamiliaService
+@inject VisitaService VisitaService
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h5">Visitas Domiciliares</MudText>
+
+    <MudPaper Class="pa-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudAutocomplete T="Familia"
+                                 Label="Família"
+                                 Variant="Variant.Outlined"
+                                 SearchFunc="BuscarFamilias"
+                                 ToStringFunc="@(f => f?.NomeResponsavel ?? string.Empty)"
+                                 @bind-Value="_familiaSelecionada" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Observações" @bind-Value="_observacoesSolicitacao"
+                              Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.EventNote"
+                           OnClick="SolicitarVisita">
+                    Solicitar visita
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudTable Items="@_visitas" Hover="true" Dense="true" Striped="true" Elevation="0">
+        <HeaderContent>
+            <MudTh>Família</MudTh>
+            <MudTh>Solicitante</MudTh>
+            <MudTh>Solicitação</MudTh>
+            <MudTh>Conclusão</MudTh>
+            <MudTh>Ação</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.NomeResponsavel</MudTd>
+            <MudTd>@context.Solicitante</MudTd>
+            <MudTd>@context.DataSolicitacao.ToString("dd/MM/yyyy")</MudTd>
+            <MudTd>@(context.DataConclusao.HasValue ? context.DataConclusao.Value.ToString("dd/MM/yyyy") : "Em aberto")</MudTd>
+            <MudTd>
+                @if (!context.DataConclusao.HasValue)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Success" Size="Size.Small"
+                               OnClick="@(() => ConcluirVisita(context))">
+                        Concluir
+                    </MudButton>
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2">Nenhuma visita registrada.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private List<Familia> _familias = new();
+    private List<RegistroVisitaDto> _visitas = new();
+    private Familia? _familiaSelecionada;
+    private string _observacoesSolicitacao = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _familias = await FamiliaService.GetFamiliasAsync();
+        _visitas = await VisitaService.GetVisitasAsync();
+    }
+
+    private Task<IEnumerable<Familia>> BuscarFamilias(string value, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult<IEnumerable<Familia>>(_familias);
+        }
+
+        var resultado = _familias.Where(f => f.NomeResponsavel.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<Familia>>(resultado);
+    }
+
+    private async Task SolicitarVisita()
+    {
+        if (_familiaSelecionada is null)
+        {
+            Snackbar.Add("Selecione a família para solicitar a visita.", Severity.Warning);
+            return;
+        }
+
+        var request = new RegistroVisitaRequest
+        {
+            FamiliaId = _familiaSelecionada.Id,
+            Observacoes = _observacoesSolicitacao
+        };
+
+        var sucesso = await VisitaService.SolicitarAsync(request);
+        if (sucesso)
+        {
+            Snackbar.Add("Visita solicitada!", Severity.Success);
+            _visitas = await VisitaService.GetVisitasAsync();
+            _observacoesSolicitacao = string.Empty;
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível solicitar a visita.", Severity.Error);
+        }
+    }
+
+    private async Task ConcluirVisita(RegistroVisitaDto visita)
+    {
+        var request = new RegistroVisitaConclusaoRequest
+        {
+            RegistroId = visita.Id
+        };
+
+        var sucesso = await VisitaService.ConcluirAsync(request);
+        if (sucesso)
+        {
+            Snackbar.Add("Visita concluída!", Severity.Success);
+            _visitas = await VisitaService.GetVisitasAsync();
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível concluir a visita.", Severity.Error);
+        }
+    }
+}

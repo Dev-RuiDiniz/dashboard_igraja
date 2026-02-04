@@ -1,0 +1,100 @@
+@page "/pessoas-rua"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using IgrejaSocial.Domain.Entities
+@using MudBlazor
+
+@inject PessoaSituacaoRuaService PessoaSituacaoRuaService
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h5">Pessoas em Situação de Rua</MudText>
+
+    <MudPaper Class="pa-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="Nome" @bind-Value="_novaPessoa.Nome" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudTextField T="string" Label="CPF" @bind-Value="_novaPessoa.Cpf"
+                              Mask="@(new PatternMask("000.000.000-00"))" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudTextField T="string" Label="RG" @bind-Value="_novaPessoa.Rg"
+                              Mask="@(new PatternMask("00.000.000-0"))" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudDatePicker Label="Nascimento" @bind-Date="_dataNascimento" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudTextField T="string" Label="Telefone" @bind-Value="_novaPessoa.TelefoneContato"
+                              Mask="@(new PatternMask("(00) 00000-0000"))" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudSwitch T="bool" Label="Documentação apresentada" Color="Color.Primary"
+                           @bind-Checked="_novaPessoa.DocumentacaoApresentada" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField T="string" Label="Local de referência" @bind-Value="_novaPessoa.LocalReferencia"
+                              Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField T="string" Label="Observações" @bind-Value="_novaPessoa.Observacoes"
+                              Lines="2" TextArea="true" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="AdicionarPessoa">
+                    Registrar pessoa
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudTable Items="@_pessoas" Hover="true" Dense="true" Striped="true" Elevation="0">
+        <HeaderContent>
+            <MudTh>Nome</MudTh>
+            <MudTh>CPF</MudTh>
+            <MudTh>Local de referência</MudTh>
+            <MudTh>Cadastro</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Nome</MudTd>
+            <MudTd>@context.Cpf</MudTd>
+            <MudTd>@context.LocalReferencia</MudTd>
+            <MudTd>@context.DataCadastro.ToString("dd/MM/yyyy")</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2">Nenhuma pessoa cadastrada.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private List<PessoaEmSituacaoRua> _pessoas = new();
+    private PessoaEmSituacaoRua _novaPessoa = new() { DocumentacaoApresentada = true };
+    private DateTime? _dataNascimento = DateTime.Today.AddYears(-30);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pessoas = await PessoaSituacaoRuaService.GetPessoasAsync();
+    }
+
+    private async Task AdicionarPessoa()
+    {
+        _novaPessoa.DataNascimento = _dataNascimento;
+        var sucesso = await PessoaSituacaoRuaService.CriarAsync(_novaPessoa);
+        if (sucesso)
+        {
+            Snackbar.Add("Pessoa registrada com sucesso!", Severity.Success);
+            _pessoas = await PessoaSituacaoRuaService.GetPessoasAsync();
+            _novaPessoa = new PessoaEmSituacaoRua { DocumentacaoApresentada = true };
+            _dataNascimento = DateTime.Today.AddYears(-30);
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível registrar a pessoa.", Severity.Error);
+        }
+    }
+}

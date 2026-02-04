@@ -1,0 +1,105 @@
+@page "/doacoes-avulsas"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using IgrejaSocial.Domain.Entities
+@using IgrejaSocial.Domain.Models
+@using MudBlazor
+
+@inject PessoaSituacaoRuaService PessoaSituacaoRuaService
+@inject DoacaoAvulsaService DoacaoAvulsaService
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h5">Doações Avulsas</MudText>
+
+    <MudPaper Class="pa-4" Elevation="0" Style="background-color: var(--mud-palette-background-grey)">
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudSelect T="PessoaEmSituacaoRua" Label="Pessoa atendida" @bind-Value="_pessoaSelecionada"
+                           Variant="Variant.Outlined" ToStringFunc="@(p => p?.Nome ?? string.Empty)">
+                    @foreach (var pessoa in _pessoas)
+                    {
+                        <MudSelectItem Value="@pessoa">@pessoa.Nome</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudTextField T="string" Label="Item" @bind-Value="_novaDoacao.Item" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="6" md="2">
+                <MudNumericField T="int" Label="Quantidade" @bind-Value="_novaDoacao.Quantidade"
+                                 Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="6" md="1">
+                <MudTextField T="string" Label="Un." @bind-Value="_novaDoacao.UnidadeMedida" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField T="string" Label="Observações" @bind-Value="_novaDoacao.Observacoes"
+                              Lines="2" TextArea="true" Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12" Class="d-flex justify-end">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.VolunteerActivism"
+                           OnClick="RegistrarDoacao">
+                    Registrar doação
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudTable Items="@_doacoes" Hover="true" Dense="true" Striped="true" Elevation="0">
+        <HeaderContent>
+            <MudTh>Pessoa</MudTh>
+            <MudTh>Item</MudTh>
+            <MudTh>Quantidade</MudTh>
+            <MudTh>Data</MudTh>
+            <MudTh>Registrado por</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.PessoaEmSituacaoRua?.Nome</MudTd>
+            <MudTd>@context.Item</MudTd>
+            <MudTd>@($"{context.Quantidade} {context.UnidadeMedida}")</MudTd>
+            <MudTd>@context.DataRegistro.ToString("dd/MM/yyyy")</MudTd>
+            <MudTd>@context.UsuarioRegistro</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2">Nenhuma doação registrada.</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private List<PessoaEmSituacaoRua> _pessoas = new();
+    private List<DoacaoAvulsa> _doacoes = new();
+    private PessoaEmSituacaoRua? _pessoaSelecionada;
+    private DoacaoAvulsaRequest _novaDoacao = new() { Quantidade = 1 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pessoas = await PessoaSituacaoRuaService.GetPessoasAsync();
+        _doacoes = await DoacaoAvulsaService.GetDoacoesAsync();
+    }
+
+    private async Task RegistrarDoacao()
+    {
+        if (_pessoaSelecionada is null)
+        {
+            Snackbar.Add("Selecione a pessoa atendida.", Severity.Warning);
+            return;
+        }
+
+        _novaDoacao.PessoaEmSituacaoRuaId = _pessoaSelecionada.Id;
+        var sucesso = await DoacaoAvulsaService.CriarAsync(_novaDoacao);
+
+        if (sucesso)
+        {
+            Snackbar.Add("Doação registrada com sucesso!", Severity.Success);
+            _doacoes = await DoacaoAvulsaService.GetDoacoesAsync();
+            _novaDoacao = new DoacaoAvulsaRequest { Quantidade = 1 };
+        }
+        else
+        {
+            Snackbar.Add("Não foi possível registrar a doação.", Severity.Error);
+        }
+    }
+}

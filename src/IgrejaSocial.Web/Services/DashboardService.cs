@@ -53,5 +53,18 @@ namespace IgrejaSocial.Web.Services
                 return new List<RankingVulnerabilidadeDto>();
             }
         }
+
+        public async Task<List<VisitaAtrasadaDto>> GetVisitasAtrasadasAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<VisitaAtrasadaDto>>("api/dashboard/visitas-atrasadas");
+                return response ?? new List<VisitaAtrasadaDto>();
+            }
+            catch
+            {
+                return new List<VisitaAtrasadaDto>();
+            }
+        }
     }
 }

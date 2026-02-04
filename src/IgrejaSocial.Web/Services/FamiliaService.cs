@@ -76,5 +76,19 @@ namespace IgrejaSocial.Web.Services
                 return null;
             }
         }
+
+        public async Task<List<HistoricoUnificadoDto>> GetHistoricoUnificadoAsync(Guid familiaId)
+        {
+            try
+            {
+                return await _httpClient
+                           .GetFromJsonAsync<List<HistoricoUnificadoDto>>($"api/familia/{familiaId}/historico-unificado")
+                       ?? new List<HistoricoUnificadoDto>();
+            }
+            catch
+            {
+                return new List<HistoricoUnificadoDto>();
+            }
+        }
     }
 }
