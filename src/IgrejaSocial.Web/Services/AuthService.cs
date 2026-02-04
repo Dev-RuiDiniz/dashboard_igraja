@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using IgrejaSocial.Domain.Models;
 
 namespace IgrejaSocial.Web.Services
@@ -36,7 +37,20 @@ namespace IgrejaSocial.Web.Services
                 return null;
             }
 
-            return await response.Content.ReadFromJsonAsync<UserInfoResponse>();
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+            if (!string.Equals(contentType, "application/json", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            try
+            {
+                return await response.Content.ReadFromJsonAsync<UserInfoResponse>();
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
     }
 }
