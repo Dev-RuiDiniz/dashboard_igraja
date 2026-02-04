@@ -1,11 +1,13 @@
 using IgrejaSocial.Domain.Entities;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace IgrejaSocial.Infrastructure.Data
 {
-    public class IgrejaSocialDbContext : DbContext
+    public class IgrejaSocialDbContext : IdentityDbContext<ApplicationUser>
     {
         public IgrejaSocialDbContext(DbContextOptions<IgrejaSocialDbContext> options) : base(options) { }
 

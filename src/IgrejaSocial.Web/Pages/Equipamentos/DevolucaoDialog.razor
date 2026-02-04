@@ -2,6 +2,7 @@
 @using IgrejaSocial.Domain.Enums
 @using IgrejaSocial.Domain.Models
 @inject EmprestimoService EmprestimoService
+@inject IDialogService DialogService
 
 <MudDialog>
     <DialogContent>
@@ -71,6 +72,17 @@
             return;
         }
 
+        var confirmar = await DialogService.ShowMessageBox(
+            "Confirmar devolução",
+            "Deseja confirmar a devolução deste equipamento?",
+            yesText: "Confirmar",
+            cancelText: "Revisar");
+
+        if (confirmar != true)
+        {
+            return;
+        }
+
         var request = new DevolucaoEquipamentoRequest
         {
             EquipamentoId = EquipamentoSelecionado.Id,
@@ -85,5 +97,17 @@
         }
     }
 
-    private void Cancelar() => MudDialog.Cancel();
+    private async Task Cancelar()
+    {
+        var confirmar = await DialogService.ShowMessageBox(
+            "Cancelar devolução",
+            "Deseja cancelar o registro da devolução?",
+            yesText: "Cancelar",
+            cancelText: "Voltar");
+
+        if (confirmar == true)
+        {
+            MudDialog.Cancel();
+        }
+    }
 }

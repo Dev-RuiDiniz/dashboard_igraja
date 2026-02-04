@@ -3,6 +3,7 @@
 @using IgrejaSocial.Domain.Models
 
 @inject CestaService CestaService
+@inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
 <MudDialog>
@@ -38,13 +39,36 @@
         }
     }
 
-    private void Cancel() => MudDialog?.Cancel();
+    private async Task Cancel()
+    {
+        var confirmar = await DialogService.ShowMessageBox(
+            "Cancelar registro",
+            "Deseja cancelar o registro da entrega?",
+            yesText: "Sim",
+            cancelText: "Não");
+
+        if (confirmar == true)
+        {
+            MudDialog?.Cancel();
+        }
+    }
 
     private async Task Submit()
     {
         if (FamiliaSelecionada is null)
         {
             Snackbar.Add("Selecione uma família para registrar a entrega.", Severity.Error);
+            return;
+        }
+
+        var confirmar = await DialogService.ShowMessageBox(
+            "Confirmar entrega",
+            "Deseja confirmar a entrega da cesta básica?",
+            yesText: "Confirmar",
+            cancelText: "Voltar");
+
+        if (confirmar != true)
+        {
             return;
         }
 

@@ -17,10 +17,19 @@ namespace IgrejaSocial.Infrastructure.ExternalServices
         {
             var cepLimpo = cep.Replace("-", "").Replace(".", "");
             
-            // Usamos o operador de coalescência nula (??) para resolver o erro CS8603
             var result = await _httpClient.GetFromJsonAsync<CepResponse>($"{cepLimpo}/json/");
-            
-            return result ?? new CepResponse(); 
+
+            if (result is null)
+            {
+                return new CepResponse { Erro = true };
+            }
+
+            if (result.Erro || string.IsNullOrWhiteSpace(result.Cep))
+            {
+                result.Erro = true;
+            }
+
+            return result;
         }
     }
 }

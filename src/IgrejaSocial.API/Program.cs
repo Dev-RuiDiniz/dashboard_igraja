@@ -4,7 +4,12 @@ using IgrejaSocial.Infrastructure.ExternalServices;
 using IgrejaSocial.Infrastructure.Repositories;
 using IgrejaSocial.Domain.Services;
 using IgrejaSocial.Application.Services;
+using IgrejaSocial.Domain.Identity;
+using IgrejaSocial.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,13 +30,31 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// --- 3. Registro do Serviço de CEP ---
+// --- 3. Configuração do Identity ---
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 8;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<IgrejaSocialDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(RoleNames.Administrador, policy => policy.RequireRole(RoleNames.Administrador));
+    options.AddPolicy(RoleNames.Voluntario, policy => policy.RequireRole(RoleNames.Administrador, RoleNames.Voluntario));
+});
+
+// --- 4. Registro do Serviço de CEP ---
 builder.Services.AddHttpClient<ICepService, ViaCepService>(client =>
 {
     client.BaseAddress = new Uri("https://viacep.com.br/ws/");
 });
 
-// --- 4. Controladores e Serialização JSON ---
+// --- 5. Controladores e Serialização JSON ---
 builder.Services.AddControllers()
     .AddJsonOptions(options => 
     {
@@ -39,9 +62,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// --- 5. Injeção de Dependência (Services e Repositories) ---
+// --- 6. Injeção de Dependência (Services e Repositories) ---
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+});
 builder.Services.AddScoped<SocialAnalysisService>();
 builder.Services.AddScoped<PatrimonioService>();
 builder.Services.AddScoped<EquipamentoService>();
@@ -52,7 +83,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-// --- 6. Pipeline de Requisições HTTP (A ordem importa aqui!) ---
+// --- 7. Pipeline de Requisições HTTP (A ordem importa aqui!) ---
 
 // O middleware do CORS deve vir antes de MapControllers e HttpsRedirection
 app.UseCors("BlazorPolicy"); 
@@ -66,9 +97,45 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    var roles = new[] { RoleNames.Administrador, RoleNames.Voluntario };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    var adminEmail = "admin@igreja.local";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser is null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, "Admin@1234");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRolesAsync(adminUser, roles);
+        }
+    }
+}
+
 app.Run();
+
+public partial class Program { }

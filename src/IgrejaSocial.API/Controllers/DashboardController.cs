@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Identity;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
 using IgrejaSocial.Infrastructure.Data;
@@ -9,6 +11,7 @@ namespace IgrejaSocial.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleNames.Administrador + "," + RoleNames.Voluntario)]
     public class DashboardController : ControllerBase
     {
         private readonly IgrejaSocialDbContext _context;
@@ -20,6 +23,9 @@ namespace IgrejaSocial.API.Controllers
             _familiaRepository = familiaRepository;
         }
 
+        /// <summary>
+        /// Retorna indicadores gerais do dashboard.
+        /// </summary>
         [HttpGet("resumo")]
         public async Task<ActionResult<DashboardStatsDto>> GetResumo()
         {
@@ -48,6 +54,9 @@ namespace IgrejaSocial.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Retorna o ranking das famílias mais vulneráveis.
+        /// </summary>
         [HttpGet("ranking-vulnerabilidade")]
         public async Task<ActionResult<IEnumerable<RankingVulnerabilidadeDto>>> GetRankingVulnerabilidade([FromQuery] int limite = 5)
         {
@@ -63,6 +72,9 @@ namespace IgrejaSocial.API.Controllers
             return Ok(ranking);
         }
 
+        /// <summary>
+        /// Lista famílias que demandam atenção por atraso em cesta básica.
+        /// </summary>
         [HttpGet("atencao")]
         public async Task<ActionResult<IEnumerable<FamiliaAtencaoDto>>> GetFamiliasAtencao()
         {

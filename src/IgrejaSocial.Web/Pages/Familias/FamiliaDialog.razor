@@ -6,6 +6,7 @@
 
 @inject FamiliaService FamiliaService
 @inject EmprestimoService EmprestimoService
+@inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
 <MudDialog>
@@ -317,12 +318,35 @@
         }
     }
 
-    private void Cancel() => MudDialog?.Cancel();
+    private async Task Cancel()
+    {
+        var confirmar = await DialogService.ShowMessageBox(
+            "Fechar formulário",
+            _isSomenteLeitura ? "Deseja fechar a visualização da família?" : "Deseja sair sem salvar as alterações?",
+            yesText: "Fechar",
+            cancelText: "Continuar");
+
+        if (confirmar == true)
+        {
+            MudDialog?.Cancel();
+        }
+    }
 
     private async Task Submit() {
         if (form is not null) await form.Validate();
         if (form?.IsValid == true)
         {
+            var confirmar = await DialogService.ShowMessageBox(
+                "Confirmar cadastro",
+                "Deseja salvar o cadastro desta família?",
+                yesText: "Salvar",
+                cancelText: "Revisar");
+
+            if (confirmar != true)
+            {
+                return;
+            }
+
             _familia.DataNascimentoResponsavel = _dataNascimentoResponsavel;
 
             var sucesso = await FamiliaService.CriarFamiliaAsync(_familia);

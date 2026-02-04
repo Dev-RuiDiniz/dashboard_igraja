@@ -4,6 +4,7 @@
 @inject FamiliaService FamiliaService
 @inject EquipamentoService EquipamentoService
 @inject EmprestimoService EmprestimoService
+@inject IDialogService DialogService
 
 <MudDialog>
     <DialogContent>
@@ -127,6 +128,17 @@
             return;
         }
 
+        var confirmar = await DialogService.ShowMessageBox(
+            "Confirmar empréstimo",
+            "Deseja registrar este empréstimo?",
+            yesText: "Registrar",
+            cancelText: "Revisar");
+
+        if (confirmar != true)
+        {
+            return;
+        }
+
         var registro = new RegistroAtendimento
         {
             FamiliaId = _familiaSelecionada.Id,
@@ -142,5 +154,17 @@
         }
     }
 
-    private void Cancelar() => MudDialog.Cancel();
+    private async Task Cancelar()
+    {
+        var confirmar = await DialogService.ShowMessageBox(
+            "Cancelar empréstimo",
+            "Deseja cancelar o registro do empréstimo?",
+            yesText: "Cancelar",
+            cancelText: "Voltar");
+
+        if (confirmar == true)
+        {
+            MudDialog.Cancel();
+        }
+    }
 }

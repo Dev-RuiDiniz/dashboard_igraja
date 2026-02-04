@@ -1,4 +1,7 @@
 @page "/familias"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
 @using System.Globalization
 @using IgrejaSocial.Domain.Entities
 @inject IDialogService DialogService

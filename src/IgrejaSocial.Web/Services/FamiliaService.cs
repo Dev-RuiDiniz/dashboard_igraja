@@ -54,8 +54,14 @@ namespace IgrejaSocial.Web.Services
 
             try 
             {
-                var resultado = await _httpClient.GetFromJsonAsync<CepResponse>($"api/cep/{cepLimpo}");
-                
+                var response = await _httpClient.GetAsync($"api/cep/{cepLimpo}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _snackbar.Add("CEP não encontrado ou inválido.", Severity.Warning);
+                    return null;
+                }
+
+                var resultado = await response.Content.ReadFromJsonAsync<CepResponse>();
                 if (resultado == null || resultado.Erro)
                 {
                     _snackbar.Add("CEP não encontrado ou inválido.", Severity.Warning);
@@ -66,6 +72,7 @@ namespace IgrejaSocial.Web.Services
             }
             catch
             {
+                _snackbar.Add("Não foi possível consultar o CEP no momento.", Severity.Error);
                 return null;
             }
         }

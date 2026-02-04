@@ -1,7 +1,9 @@
 using IgrejaSocial.Domain.Entities;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Identity;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace IgrejaSocial.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleNames.Administrador + "," + RoleNames.Voluntario)]
     public class EmprestimosController : ControllerBase
     {
         private readonly IEquipamentoRepository _equipamentoRepository;
@@ -24,6 +27,9 @@ namespace IgrejaSocial.API.Controllers
             _registroRepository = registroRepository;
         }
 
+        /// <summary>
+        /// Registra um empréstimo de equipamento.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<RegistroAtendimento>> Criar(RegistroAtendimento registro)
         {
@@ -71,6 +77,9 @@ namespace IgrejaSocial.API.Controllers
             return CreatedAtAction(nameof(Criar), registro);
         }
 
+        /// <summary>
+        /// Registra a devolução de um equipamento emprestado.
+        /// </summary>
         [HttpPost("devolucao")]
         public async Task<ActionResult> RegistrarDevolucao(DevolucaoEquipamentoRequest request)
         {
@@ -102,6 +111,9 @@ namespace IgrejaSocial.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Lista o histórico de empréstimos de uma família.
+        /// </summary>
         [HttpGet("familia/{familiaId:guid}")]
         public async Task<ActionResult<IEnumerable<RegistroAtendimentoHistoricoDto>>> ListarPorFamilia(Guid familiaId)
         {

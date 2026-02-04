@@ -6,4 +6,7 @@
     <Project Path="src/IgrejaSocial.Infrastructure/IgrejaSocial.Infrastructure.csproj" />
     <Project Path="src/IgrejaSocial.Web/IgrejaSocial.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/IgrejaSocial.IntegrationTests/IgrejaSocial.IntegrationTests.csproj" />
+  </Folder>
 </Solution>

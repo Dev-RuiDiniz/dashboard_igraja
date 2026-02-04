@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Http;
 using IgrejaSocial.Web;
 using MudBlazor.Services;
@@ -18,7 +19,12 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 // 2. Registro do MudBlazor
 builder.Services.AddMudServices();
 
-// 3. Injeção de Dependência dos seus Serviços
+// 3. Autenticação e Autorização (Blazor WASM)
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+
+// 4. Injeção de Dependência dos seus Serviços
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<FamiliaService>();
 builder.Services.AddScoped<EquipamentoService>();
