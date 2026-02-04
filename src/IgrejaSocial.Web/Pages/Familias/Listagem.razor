@@ -9,7 +9,7 @@
 
 <MudText Typo="Typo.h4" Class="mb-4">Gerenciamento de Famílias</MudText>
 
-<MudTable Items="@_familias" Hover="true" Striped="true" Filter="new Func<Familia,bool>(FilterFunc1)" T="Familia" Elevation="2">
+<MudTable Items="@_familias" Hover="true" Striped="true" Filter="new Func<Familia,bool>(FilterFunc1)" T="Familia" Elevation="2" Loading="@_carregando">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Famílias Cadastradas</MudText>
         
@@ -36,8 +36,13 @@
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.LocationOn"
                           IconSize="Size.Medium" />
-            <MudTextField @bind-Value="_searchRenda"
-                          Placeholder="Buscar por Renda"
+            <MudTextField @bind-Value="_searchRendaMin"
+                          Placeholder="Renda mínima"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Payments"
+                          IconSize="Size.Medium" />
+            <MudTextField @bind-Value="_searchRendaMax"
+                          Placeholder="Renda máxima"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Payments"
                           IconSize="Size.Medium" />
@@ -68,7 +73,7 @@
             @if (!context.DocumentacaoApresentada)
             {
                 <MudTooltip Text="Documentação pendente">
-                    <MudIcon Icon="@Icons.Material.Filled.ReportProblem" Color="Color.Warning" />
+                    <MudIcon Icon="@Icons.Material.Filled.ReportProblem" Style="color: #f39c12;" />
                 </MudTooltip>
             }
             else
@@ -107,13 +112,23 @@
 @code {
     private string _searchCpfRg = "";
     private string _searchBairro = "";
-    private string _searchRenda = "";
+    private string _searchRendaMin = "";
+    private string _searchRendaMax = "";
     private List<Familia> _familias = new();
+    private bool _carregando;
 
     // Carrega os dados da API ao iniciar a página
     protected override async Task OnInitializedAsync()
     {
-        _familias = await FamiliaService.GetFamiliasAsync();
+        _carregando = true;
+        try
+        {
+            _familias = await FamiliaService.GetFamiliasAsync();
+        }
+        finally
+        {
+            _carregando = false;
+        }
     }
 
     // Método disparado pelo botão "Nova Família"
@@ -179,22 +194,19 @@
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(_searchRenda))
+        if (!string.IsNullOrWhiteSpace(_searchRendaMin) &&
+            decimal.TryParse(_searchRendaMin, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-BR"), out var rendaMin))
         {
-            var rendaOk = false;
-            var rendaFormatada = familia.RendaPerCapita.ToString("C", CultureInfo.GetCultureInfo("pt-BR"));
-            if (rendaFormatada.Contains(_searchRenda, StringComparison.OrdinalIgnoreCase))
+            if (familia.RendaPerCapita < rendaMin)
             {
-                rendaOk = true;
+                return false;
             }
+        }
 
-            if (!rendaOk &&
-                decimal.TryParse(_searchRenda, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-BR"), out var rendaFiltro))
-            {
-                rendaOk = familia.RendaPerCapita >= rendaFiltro;
-            }
-
-            if (!rendaOk)
+        if (!string.IsNullOrWhiteSpace(_searchRendaMax) &&
+            decimal.TryParse(_searchRendaMax, NumberStyles.Any, CultureInfo.GetCultureInfo("pt-BR"), out var rendaMax))
+        {
+            if (familia.RendaPerCapita > rendaMax)
             {
                 return false;
             }

@@ -51,6 +51,19 @@ namespace IgrejaSocial.Web.Services
             }
         }
 
+        public async Task<List<CestasAnuaisDto>> GetCestasAnuaisAsync(int ano)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<CestasAnuaisDto>>($"api/relatorios/cestas/anual?ano={ano}");
+                return response ?? new List<CestasAnuaisDto>();
+            }
+            catch
+            {
+                return new List<CestasAnuaisDto>();
+            }
+        }
+
         public async Task<bool> DownloadRelatorioKpisAsync(int meses)
         {
             try

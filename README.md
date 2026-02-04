@@ -38,6 +38,15 @@ Usuário administrador criado automaticamente no primeiro start:
 - **Email:** admin@igreja.local
 - **Senha:** Admin@1234
 
+Para customizar esse usuário, ajuste os valores em `Program.cs` (API) antes do primeiro start ou remova o usuário no banco e reinicie a aplicação. O seeding também cria as roles **Administrador** e **Voluntário**.
+
+## Relatórios mensais
+No painel principal (Dashboard), utilize os botões:
+- **Exportar atendimentos do mês**: gera um CSV com as famílias atendidas no mês selecionado.
+- **Baixar KPIs em PDF**: emite o PDF com indicadores, incluindo giro de estoque e tempo médio de empréstimo.
+
+Esses relatórios são protegidos por role **Administrador**.
+
 ## Testes
 ```bash
 dotnet test

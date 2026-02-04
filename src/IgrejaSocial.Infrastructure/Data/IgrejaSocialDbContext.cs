@@ -28,6 +28,7 @@ namespace IgrejaSocial.Infrastructure.Data
             {
                 entity.HasKey(f => f.Id);
                 entity.HasIndex(f => f.CpfResponsavel).IsUnique();
+                entity.HasIndex(f => f.RgResponsavel);
                 entity.Property(f => f.NomeResponsavel).IsRequired().HasMaxLength(150);
                 entity.Property(f => f.Endereco).IsRequired().HasMaxLength(255);
                 entity.Property(f => f.RendaFamiliarTotal).HasPrecision(18, 2);
@@ -65,6 +66,7 @@ namespace IgrejaSocial.Infrastructure.Data
                 entity.HasKey(r => r.Id);
                 entity.Property(r => r.Observacoes).HasMaxLength(500);
                 entity.Property(r => r.UsuarioEntrega).HasMaxLength(150);
+                entity.Property(r => r.UsuarioId).HasMaxLength(450);
                 entity.Property(r => r.TipoAtendimento).IsRequired();
 
                 entity.HasOne(r => r.Familia)

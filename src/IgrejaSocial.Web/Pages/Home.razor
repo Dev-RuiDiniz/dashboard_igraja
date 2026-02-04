@@ -69,6 +69,10 @@
                 <MudText Typo="Typo.body2" Color="Color.Secondary">
                     Sem cesta há mais de 2 meses.
                 </MudText>
+                @if (_carregando)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+                }
                 <MudTable Items="@_familiasAtencao" Dense="true" Hover="true" Elevation="0">
                     <HeaderContent>
                         <MudTh>Responsável</MudTh>
@@ -97,8 +101,12 @@
             <MudStack Spacing="2">
                 <MudText Typo="Typo.h6">Ranking de Vulnerabilidade</MudText>
                 <MudText Typo="Typo.body2" Color="Color.Secondary">
-                    Renda per capita vs. dependentes.
+                    Renda per capita e tipo de moradia.
                 </MudText>
+                @if (_carregando)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+                }
                 <MudTable Items="@_rankingVulnerabilidade" Dense="true" Hover="true" Elevation="0">
                     <HeaderContent>
                         <MudTh>Responsável</MudTh>
@@ -117,6 +125,40 @@
             </MudStack>
         </MudCard>
     </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudCard Elevation="2" Class="pa-4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">Alertas de Estoque Baixo</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Tipos de equipamentos com poucas unidades disponíveis.
+                </MudText>
+                @if (_carregando)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+                }
+                <MudTable Items="@_estoqueBaixo" Dense="true" Hover="true" Elevation="0">
+                    <HeaderContent>
+                        <MudTh>Tipo</MudTh>
+                        <MudTh>Disponíveis</MudTh>
+                        <MudTh>Total</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Tipo">@context.Tipo</MudTd>
+                        <MudTd DataLabel="Disponíveis">
+                            <MudChip Color="Color.Warning" Size="Size.Small" Variant="Variant.Text">
+                                @context.Disponiveis
+                            </MudChip>
+                        </MudTd>
+                        <MudTd DataLabel="Total">@context.Total</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText Typo="Typo.body2">Nenhum alerta de estoque baixo no momento.</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudStack>
+        </MudCard>
+    </MudItem>
 </MudGrid>
 
 <MudGrid Class="mt-6">
@@ -127,6 +169,10 @@
                 <MudText Typo="Typo.body2" Color="Color.Secondary">
                     Solicitações pendentes ou famílias sem visita recente.
                 </MudText>
+                @if (_carregando)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+                }
                 <MudTable Items="@_visitasAtrasadas" Dense="true" Hover="true" Elevation="0">
                     <HeaderContent>
                         <MudTh>Responsável</MudTh>
@@ -146,7 +192,11 @@
                                 ? context.UltimaVisitaConcluida.Value.ToString("dd/MM/yyyy")
                                 : "Sem registro")
                         </MudTd>
-                        <MudTd DataLabel="Dias">@context.DiasEmAberto</MudTd>
+                        <MudTd DataLabel="Dias">
+                            <MudChip Color="Color.Error" Size="Size.Small" Variant="Variant.Text">
+                                @context.DiasEmAberto
+                            </MudChip>
+                        </MudTd>
                     </RowTemplate>
                     <NoRecordsContent>
                         <MudText Typo="Typo.body2">Nenhuma visita atrasada no momento.</MudText>
@@ -195,6 +245,19 @@
                     </MudPaper>
                 </MudItem>
             </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudText Typo="Typo.h6">Cestas entregues (acumulado anual)</MudText>
+            @if (_carregando)
+            {
+                <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+            }
+            <MudChart ChartType="ChartType.Line"
+                      Labels="@_labelsMeses"
+                      ChartSeries="@_seriesCestasAnuais"
+                      Width="100%"
+                      Height="240px" />
         </MudCard>
     </MudItem>
 </MudGrid>
@@ -204,16 +267,32 @@
     private List<FamiliaAtencaoDto> _familiasAtencao = new();
     private List<RankingVulnerabilidadeDto> _rankingVulnerabilidade = new();
     private List<VisitaAtrasadaDto> _visitasAtrasadas = new();
+    private List<EquipamentoEstoqueBaixoDto> _estoqueBaixo = new();
     private RelatorioMensalDto _relatorio = new();
+    private List<CestasAnuaisDto> _cestasAnuais = new();
+    private bool _carregando;
+    private string[] _labelsMeses = Array.Empty<string>();
+    private List<ChartSeries> _seriesCestasAnuais = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _stats = await DashboardService.GetResumoAsync();
-        _familiasAtencao = await DashboardService.GetFamiliasAtencaoAsync();
-        _rankingVulnerabilidade = await DashboardService.GetRankingVulnerabilidadeAsync(5);
-        _visitasAtrasadas = await DashboardService.GetVisitasAtrasadasAsync();
-        var hoje = DateTime.Today;
-        _relatorio = await RelatorioService.GetRelatorioMensalAsync(hoje.Month, hoje.Year);
+        _carregando = true;
+        try
+        {
+            _stats = await DashboardService.GetResumoAsync();
+            _familiasAtencao = await DashboardService.GetFamiliasAtencaoAsync();
+            _rankingVulnerabilidade = await DashboardService.GetRankingVulnerabilidadeAsync(5);
+            _visitasAtrasadas = await DashboardService.GetVisitasAtrasadasAsync();
+            _estoqueBaixo = await DashboardService.GetEstoqueBaixoAsync(2);
+            var hoje = DateTime.Today;
+            _relatorio = await RelatorioService.GetRelatorioMensalAsync(hoje.Month, hoje.Year);
+            _cestasAnuais = await RelatorioService.GetCestasAnuaisAsync(hoje.Year);
+            AtualizarSerieCestas();
+        }
+        finally
+        {
+            _carregando = false;
+        }
     }
 
     private async Task DownloadCestasAtendidas()
@@ -225,5 +304,28 @@
     private async Task DownloadRelatorioKpis()
     {
         await RelatorioService.DownloadRelatorioKpisAsync(6);
+    }
+
+    private void AtualizarSerieCestas()
+    {
+        _labelsMeses = new[]
+        {
+            "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+            "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+        };
+
+        var acumulado = _cestasAnuais.Select(c => (double)c.TotalAcumulado).ToArray();
+        if (acumulado.Length != _labelsMeses.Length)
+        {
+            acumulado = new double[_labelsMeses.Length];
+        }
+        _seriesCestasAnuais = new List<ChartSeries>
+        {
+            new()
+            {
+                Name = "Acumulado",
+                Data = acumulado
+            }
+        };
     }
 }

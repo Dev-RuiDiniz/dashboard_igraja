@@ -90,6 +90,8 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     EquipamentoId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     TipoAtendimento = table.Column<int>(type: "int", nullable: false),
                     DataEntrega = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UsuarioEntrega = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     DataEmprestimo = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataPrevistaDevolucao = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DataDevolucaoReal = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -123,6 +125,11 @@ namespace IgrejaSocial.Infrastructure.Migrations
                 table: "Familias",
                 column: "CpfResponsavel",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Familias_RgResponsavel",
+                table: "Familias",
+                column: "RgResponsavel");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Membros_FamiliaId",

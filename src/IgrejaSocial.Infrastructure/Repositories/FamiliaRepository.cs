@@ -61,6 +61,7 @@ namespace IgrejaSocial.Infrastructure.Repositories
 
             return familias
                 .OrderBy(f => f.RendaPerCapita)
+                .ThenByDescending(f => GetPesoMoradia(f.Residencia))
                 .ThenByDescending(f => f.Membros.Count)
                 .Take(limite);
         }
@@ -81,5 +82,17 @@ namespace IgrejaSocial.Infrastructure.Repositories
         public void Atualizar(Familia familia) => _context.Familias.Update(familia);
 
         public async Task SalvarAlteracoesAsync() => await _context.SaveChangesAsync();
+
+        private static int GetPesoMoradia(TipoMoradia tipoMoradia)
+        {
+            return tipoMoradia switch
+            {
+                TipoMoradia.SituacaoDeRua => 4,
+                TipoMoradia.Ocupacao => 3,
+                TipoMoradia.Cedida => 2,
+                TipoMoradia.Alugada => 1,
+                _ => 0
+            };
+        }
     }
 }

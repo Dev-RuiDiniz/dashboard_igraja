@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace IgrejaSocial.API.Controllers
 {
@@ -71,6 +72,8 @@ namespace IgrejaSocial.API.Controllers
 
             registro.TipoAtendimento = TipoAtendimento.EmprestimoEquipamento;
             registro.DataEmprestimo = DateTime.Now;
+            registro.UsuarioEntrega = User?.Identity?.Name ?? "Sistema";
+            registro.UsuarioId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
             await _registroRepository.AdicionarAsync(registro);
             await _registroRepository.SalvarAlteracoesAsync();
 

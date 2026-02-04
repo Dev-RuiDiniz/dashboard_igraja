@@ -42,8 +42,10 @@ namespace IgrejaSocial.API.Controllers
             // 3. Contagem de famílias vulneráveis (Renda per capita < 660)
             // Nota: Se você já implementou a lógica de vulnerabilidade no Domain,
             // podemos filtrar aqui.
-            var familiasVulneraveis = await _context.Familias
-                .CountAsync(f => f.IsVulneravel);
+            var familias = await _context.Familias
+                .Include(f => f.Membros)
+                .ToListAsync();
+            var familiasVulneraveis = familias.Count(f => f.IsVulneravel);
 
             return Ok(new DashboardStatsDto
             {
@@ -155,6 +157,29 @@ namespace IgrejaSocial.API.Controllers
                     (!dto.UltimaVisitaConcluida.HasValue && dto.DiasEmAberto >= limiteDias) ||
                     (dto.UltimaVisitaConcluida.HasValue && dto.UltimaVisitaConcluida.Value.Date < limiteData))
                 .OrderByDescending(dto => dto.DiasEmAberto)
+                .ToList();
+
+            return Ok(resultado);
+        }
+
+        /// <summary>
+        /// Lista tipos de equipamentos com poucas unidades disponíveis.
+        /// </summary>
+        [HttpGet("estoque-baixo")]
+        public async Task<ActionResult<IEnumerable<EquipamentoEstoqueBaixoDto>>> GetEstoqueBaixo([FromQuery] int limite = 2)
+        {
+            var equipamentos = await _context.Equipamentos.AsNoTracking().ToListAsync();
+
+            var resultado = equipamentos
+                .GroupBy(e => e.Tipo)
+                .Select(grupo => new EquipamentoEstoqueBaixoDto
+                {
+                    Tipo = grupo.Key,
+                    Disponiveis = grupo.Count(e => e.IsDisponivel),
+                    Total = grupo.Count()
+                })
+                .Where(dto => dto.Disponiveis <= limite)
+                .OrderBy(dto => dto.Disponiveis)
                 .ToList();
 
             return Ok(resultado);

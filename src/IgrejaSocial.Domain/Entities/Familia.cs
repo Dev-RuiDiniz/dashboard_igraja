@@ -70,8 +70,13 @@ namespace IgrejaSocial.Domain.Entities
             ? (RendaFamiliarTotal + Membros.Sum(m => m.RendaIndividual)) / TotalIntegrantes 
             : 0;
 
-        public bool IsVulneravel => RendaPerCapita < 660.00m;
+        public bool IsVulneravel => RendaPerCapita < 660.00m && IsMoradiaVulneravel(Residencia);
 
         public bool PossuiCriancas => Membros.Any(m => m.Idade < 12);
+
+        private static bool IsMoradiaVulneravel(TipoMoradia tipoMoradia)
+        {
+            return tipoMoradia != TipoMoradia.Propria;
+        }
     }
 }

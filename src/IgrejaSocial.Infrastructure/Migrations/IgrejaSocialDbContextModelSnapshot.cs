@@ -123,6 +123,8 @@ namespace IgrejaSocial.Infrastructure.Migrations
                     b.HasIndex("CpfResponsavel")
                         .IsUnique();
 
+                    b.HasIndex("RgResponsavel");
+
                     b.ToTable("Familias");
                 });
 
@@ -198,6 +200,14 @@ namespace IgrejaSocial.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UsuarioEntrega")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("UsuarioId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("TipoAtendimento")
                         .HasColumnType("int");
