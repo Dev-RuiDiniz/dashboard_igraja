@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="180" viewBox="0 0 520 180" role="img" aria-labelledby="title desc">
+  <title id="title">Primeira Igreja Batista de Taubaté</title>
+  <desc id="desc">Logotipo em azul e dourado com cruz em mosaico.</desc>
+  <rect width="520" height="180" fill="white" rx="12" />
+  <g transform="translate(24,24)">
+    <rect x="40" y="0" width="20" height="20" fill="#d4a437" />
+    <rect x="60" y="0" width="20" height="20" fill="#1f4b86" />
+    <rect x="80" y="0" width="20" height="20" fill="#d4a437" />
+
+    <rect x="20" y="20" width="20" height="20" fill="#1f4b86" />
+    <rect x="40" y="20" width="20" height="20" fill="#1f4b86" />
+    <rect x="60" y="20" width="20" height="20" fill="#d4a437" />
+    <rect x="80" y="20" width="20" height="20" fill="#1f4b86" />
+    <rect x="100" y="20" width="20" height="20" fill="#1f4b86" />
+
+    <rect x="40" y="40" width="20" height="20" fill="#d4a437" />
+    <rect x="60" y="40" width="20" height="20" fill="#1f4b86" />
+    <rect x="80" y="40" width="20" height="20" fill="#d4a437" />
+
+    <rect x="60" y="60" width="20" height="20" fill="#1f4b86" />
+    <rect x="60" y="80" width="20" height="20" fill="#d4a437" />
+  </g>
+  <g transform="translate(170,36)" fill="#1f4b86" font-family="'Segoe UI', Arial, sans-serif">
+    <text x="0" y="28" font-size="22" letter-spacing="3" fill="#1f4b86">PRIMEIRA</text>
+    <text x="0" y="62" font-size="38" font-weight="700" fill="#d4a437">IGREJA BATISTA</text>
+    <text x="0" y="96" font-size="20" letter-spacing="2" fill="#1f4b86">DE TAUBATÉ</text>
+  </g>
+</svg>

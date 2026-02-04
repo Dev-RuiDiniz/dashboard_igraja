@@ -13,7 +13,10 @@
 <MudLayout>
     <MudAppBar Elevation="1" Color="Color.Primary">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Igreja Social</MudText>
+        <div class="appbar-brand">
+            <img src="images/logo-igreja.svg" alt="Primeira Igreja Batista de Taubaté" />
+            <MudText Typo="Typo.h5" Class="ml-3">Igreja Social</MudText>
+        </div>
         <MudSpacer />
         <AuthorizeView>
             <Authorized Context="authState">
@@ -41,7 +44,7 @@
         <NavMenu />
     </MudDrawer>
 
-    <MudMainContent Class="pa-4">
+    <MudMainContent Class="pa-4 main-content">
         <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
             @Body
         </MudContainer>
@@ -69,13 +72,16 @@
     {
         PaletteLight = new PaletteLight()
         {
-            Primary = "#2c3e50",    // Azul escuro sóbrio
-            Secondary = "#e74c3c",  // Vermelho para alertas/vulnerabilidade
-            AppbarBackground = "#2c3e50",
+            Primary = "#1f4b86",    // Azul principal
+            Secondary = "#d4a437",  // Dourado
+            AppbarBackground = "#1f4b86",
+            Background = "#f5f7fb",
+            Surface = "#ffffff",
         },
         PaletteDark = new PaletteDark()
         {
-            Primary = "#34495e",
+            Primary = "#1f4b86",
+            Secondary = "#d4a437",
         }
     };
 }

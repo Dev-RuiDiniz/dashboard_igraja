@@ -5,7 +5,15 @@
 @inject IDashboardService DashboardService
 @inject RelatorioService RelatorioService
 
-<MudText Typo="Typo.h4" Class="mb-6">Painel de Controle</MudText>
+<MudStack Spacing="2" Class="mb-6">
+    <MudText Typo="Typo.h4">Painel de Controle</MudText>
+    <MudPaper Elevation="0" Class="pa-4" Style="border-left: 6px solid var(--mud-palette-secondary);">
+        <MudText Typo="Typo.subtitle1" Color="Color.Primary">Dados do Cliente</MudText>
+        <MudText Typo="Typo.body1"><strong>Nome:</strong> Primeira Igreja Batista</MudText>
+        <MudText Typo="Typo.body1"><strong>Localização:</strong> Taubaté, São Paulo, Brasil</MudText>
+        <MudText Typo="Typo.body1"><strong>Endereço:</strong> Rua José Vicente de Barros, 664, Taubaté, SP</MudText>
+    </MudPaper>
+</MudStack>
 
 <MudGrid>
     @* Card: Famílias Atendidas *@
