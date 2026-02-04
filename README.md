@@ -83,6 +83,12 @@ As principais configurações ficam em `src/IgrejaSocial.API/appsettings.json` e
 
 > O seeding cria as roles **Administrador** e **Voluntário**.
 
+Exemplo de `.env` (copie de `.env.example`):
+```env
+ADMINSEED__EMAIL=admin@local.test
+ADMINSEED__PASSWORD=ChangeMe123!
+```
+
 ## Como rodar o projeto (API + UI)
 1. Configure a connection string usando variáveis de ambiente ou user-secrets.
 2. Execute a API (ela hospeda o Blazor WebAssembly):
