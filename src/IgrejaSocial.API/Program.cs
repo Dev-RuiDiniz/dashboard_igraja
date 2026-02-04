@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
 });
 
 // --- 2. Configuração do Banco de Dados (SQL Server) ---
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<IgrejaSocialDbContext>(options =>
@@ -52,9 +52,11 @@ builder.Services.AddAuthorization(options =>
 });
 
 // --- 4. Registro do Serviço de CEP ---
+var cepBaseUrl = builder.Configuration.GetValue<string>("CepService:BaseUrl")
+    ?? throw new InvalidOperationException("CepService:BaseUrl not configured.");
 builder.Services.AddHttpClient<ICepService, ViaCepService>(client =>
 {
-    client.BaseAddress = new Uri("https://viacep.com.br/ws/");
+    client.BaseAddress = new Uri(cepBaseUrl);
 });
 
 // --- 5. Controladores e Serialização JSON ---
@@ -120,21 +122,25 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    var adminEmail = "admin@igreja.local";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser is null)
+    var adminEmail = builder.Configuration.GetValue<string>("AdminSeed:Email");
+    var adminPassword = builder.Configuration.GetValue<string>("AdminSeed:Password");
+    if (!string.IsNullOrWhiteSpace(adminEmail) && !string.IsNullOrWhiteSpace(adminPassword))
     {
-        adminUser = new ApplicationUser
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser is null)
         {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
+            adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true
+            };
 
-        var result = await userManager.CreateAsync(adminUser, "Admin@1234");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRolesAsync(adminUser, roles);
+            var result = await userManager.CreateAsync(adminUser, adminPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRolesAsync(adminUser, roles);
+            }
         }
     }
 }

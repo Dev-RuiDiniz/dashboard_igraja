@@ -21,5 +21,8 @@ namespace IgrejaSocial.Domain.Models
 
         [JsonPropertyName("erro")]
         public bool Erro { get; set; } // Esta é a propriedade que estava faltando
+
+        [JsonIgnore]
+        public bool ServicoIndisponivel { get; set; }
     }
 }

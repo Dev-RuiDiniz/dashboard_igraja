@@ -22,7 +22,8 @@ src/
 - SQL Server (ou ajuste a connection string)
 
 ## Como rodar o projeto
-1. Configure a connection string em `src/IgrejaSocial.API/appsettings.json` (chave `DefaultConnection`).
+1. Configure a connection string usando variáveis de ambiente ou user-secrets:
+   - `ConnectionStrings__DefaultConnection`
 2. Execute as migrações (se aplicável) e rode a API:
 
 ```bash
@@ -33,12 +34,13 @@ dotnet run --project src/IgrejaSocial.API/IgrejaSocial.API.csproj
    - UI: `https://localhost:5001`
    - Swagger: `https://localhost:5001/swagger`
 
-## Credenciais iniciais
-Usuário administrador criado automaticamente no primeiro start:
-- **Email:** admin@igreja.local
-- **Senha:** Admin@1234
+## Configuração de secrets (conexão e admin seed)
+- **Connection string**: defina `ConnectionStrings__DefaultConnection` no ambiente ou com user-secrets.
+- **Admin seed** (opcional): para criar um usuário administrador no primeiro start, configure:
+  - `AdminSeed__Email`
+  - `AdminSeed__Password`
 
-Para customizar esse usuário, ajuste os valores em `Program.cs` (API) antes do primeiro start ou remova o usuário no banco e reinicie a aplicação. O seeding também cria as roles **Administrador** e **Voluntário**.
+> O seeding continua criando as roles **Administrador** e **Voluntário**.
 
 ## Relatórios mensais
 No painel principal (Dashboard), utilize os botões:
@@ -50,6 +52,26 @@ Esses relatórios são protegidos por role **Administrador**.
 ## Testes
 ```bash
 dotnet test
+```
+
+## Manutenção: adicionando novos tipos de equipamentos
+1. Atualize o enum `TipoEquipamento` em `src/IgrejaSocial.Domain/Enums/EquipamentoEnums.cs`.
+2. Caso use dados seed, acrescente o novo tipo em `IgrejaSocialDbContext` (se aplicável).
+3. A UI lista os tipos automaticamente via `Enum.GetValues<TipoEquipamento>()`, então não há ajustes adicionais na tela.
+
+## Backup inicial
+Scripts prontos em `scripts/`:
+- **SQLite**: define `DB_ENGINE=sqlite` e `SQLITE_PATH=/caminho/IgrejaSocial.db`.
+- **SQL Server**: define `DB_ENGINE=sqlserver` e as variáveis `SQLSERVER_SERVER`, `SQLSERVER_DATABASE`, `SQLSERVER_USER`, `SQLSERVER_PASSWORD`.
+
+Exemplos:
+```bash
+DB_ENGINE=sqlite SQLITE_PATH=./IgrejaSocial.db ./scripts/backup-db.sh
+```
+
+```bash
+DB_ENGINE=sqlserver SQLSERVER_SERVER=localhost SQLSERVER_DATABASE=IgrejaSocialDb \
+SQLSERVER_USER=sa SQLSERVER_PASSWORD='senha' ./scripts/backup-db.sh
 ```
 
 ## Observações de segurança

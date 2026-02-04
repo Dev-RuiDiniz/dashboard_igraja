@@ -27,7 +27,7 @@
     [CascadingParameter] public MudDialogInstance? MudDialog { get; set; }
     [Parameter] public Familia? FamiliaSelecionada { get; set; }
 
-    private DateTime? _dataEntrega = DateTime.Today;
+    private DateTime? _dataEntrega = DateTime.UtcNow.Date;
     private string _observacoes = string.Empty;
     private string _titulo = "Registrar entrega de cesta básica";
 
@@ -75,7 +75,7 @@
         var request = new CestaBasicaEntregaRequest
         {
             FamiliaId = FamiliaSelecionada.Id,
-            DataEntrega = _dataEntrega ?? DateTime.Today,
+            DataEntrega = _dataEntrega ?? DateTime.UtcNow.Date,
             Observacoes = _observacoes
         };
 

@@ -26,7 +26,12 @@ namespace IgrejaSocial.API.Controllers
         {
             var endereco = await _cepService.BuscarEnderecoPorCepAsync(cep);
             
-            if (endereco == null || string.IsNullOrEmpty(endereco.Cep) || endereco.Erro)
+            if (endereco.ServicoIndisponivel)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Serviço de CEP indisponível.");
+            }
+
+            if (string.IsNullOrEmpty(endereco.Cep) || endereco.Erro)
                 return NotFound("CEP não encontrado.");
 
             return Ok(endereco);

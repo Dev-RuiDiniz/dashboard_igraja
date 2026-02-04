@@ -136,7 +136,7 @@ namespace IgrejaSocial.Infrastructure.Data
                     Descricao = "Cadeira de rodas manual dobrável",
                     IsDisponivel = true,
                     ValorEstimado = 850.00m,
-                    DataAquisicao = DateTime.Now
+                    DataAquisicao = DateTime.UtcNow
                 },
                 new Equipamento
                 {
@@ -147,7 +147,7 @@ namespace IgrejaSocial.Infrastructure.Data
                     Descricao = "Andador de alumínio com rodas",
                     IsDisponivel = true,
                     ValorEstimado = 250.00m,
-                    DataAquisicao = DateTime.Now
+                    DataAquisicao = DateTime.UtcNow
                 }
             );
 
@@ -164,7 +164,7 @@ namespace IgrejaSocial.Infrastructure.Data
                     Status = StatusAcompanhamento.Ativo,
                     Endereco = "Rua das Oliveiras, 50 - Bairro Solidariedade",
                     RendaFamiliarTotal = 400.00m, // Renda baixa para forçar Vulnerabilidade = True
-                    DataCadastro = DateTime.Now
+                    DataCadastro = DateTime.UtcNow
                 }
             );
         }

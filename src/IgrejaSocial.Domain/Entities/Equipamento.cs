@@ -26,7 +26,7 @@ namespace IgrejaSocial.Domain.Entities
         public bool IsDisponivel { get; set; } = true; //
 
         [DataType(DataType.Date)]
-        public DateTime DataAquisicao { get; set; } = DateTime.Now; //
+        public DateTime DataAquisicao { get; set; } = DateTime.UtcNow; //
 
         public decimal ValorEstimado { get; set; } //
 

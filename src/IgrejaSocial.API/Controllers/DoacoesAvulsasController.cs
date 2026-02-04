@@ -50,7 +50,7 @@ namespace IgrejaSocial.API.Controllers
                 UnidadeMedida = request.UnidadeMedida,
                 Observacoes = request.Observacoes,
                 UsuarioRegistro = usuario,
-                DataRegistro = DateTime.Now
+                DataRegistro = DateTime.UtcNow
             };
 
             _context.DoacoesAvulsas.Add(doacao);

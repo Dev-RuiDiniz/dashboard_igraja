@@ -37,7 +37,7 @@ namespace IgrejaSocial.API.Controllers
                 return NotFound("Família não encontrada.");
             }
 
-            var dataEntrega = request.DataEntrega.Date;
+            var dataEntrega = DateTime.SpecifyKind(request.DataEntrega.Date, DateTimeKind.Utc);
             var jaRecebeu = await _registroRepository.ExisteCestaBasicaNoMesAsync(
                 request.FamiliaId,
                 dataEntrega.Month,

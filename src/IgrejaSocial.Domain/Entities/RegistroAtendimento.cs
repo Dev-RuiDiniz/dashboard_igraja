@@ -32,7 +32,7 @@ namespace IgrejaSocial.Domain.Entities
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime DataEmprestimo { get; set; } = DateTime.Now;
+        public DateTime DataEmprestimo { get; set; } = DateTime.UtcNow;
 
         [DataType(DataType.Date)]
         public DateTime? DataPrevistaDevolucao { get; set; }

@@ -57,6 +57,12 @@ namespace IgrejaSocial.Web.Services
                 var response = await _httpClient.GetAsync($"api/cep/{cepLimpo}");
                 if (!response.IsSuccessStatusCode)
                 {
+                    if (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+                    {
+                        _snackbar.Add("Serviço de CEP indisponível no momento.", Severity.Error);
+                        return null;
+                    }
+
                     _snackbar.Add("CEP não encontrado ou inválido.", Severity.Warning);
                     return null;
                 }

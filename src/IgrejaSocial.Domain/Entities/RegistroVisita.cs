@@ -19,7 +19,7 @@ namespace IgrejaSocial.Domain.Entities
         public string? Executor { get; set; }
 
         [DataType(DataType.DateTime)]
-        public DateTime DataSolicitacao { get; set; } = DateTime.Now;
+        public DateTime DataSolicitacao { get; set; } = DateTime.UtcNow;
 
         [DataType(DataType.DateTime)]
         public DateTime? DataConclusao { get; set; }
