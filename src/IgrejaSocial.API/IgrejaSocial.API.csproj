@@ -9,6 +9,7 @@
   <ItemGroup>
   <PackageReference Include="AutoMapper" Version="12.0.1" />
   <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IgrejaSocial.Application\IgrejaSocial.Application.csproj" />
     <ProjectReference Include="..\IgrejaSocial.Infrastructure\IgrejaSocial.Infrastructure.csproj" />
+    <ProjectReference Include="..\IgrejaSocial.Web\IgrejaSocial.Web.csproj" />
   </ItemGroup>
 
 </Project>
