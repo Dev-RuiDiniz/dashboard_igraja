@@ -1,27 +1,36 @@
 ﻿<MudNavMenu>
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">PRINCIPAL</MudText>
-    
-    <MudNavLink href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
-        Dashboard
-    </MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">PRINCIPAL</MudText>
+            
+            <MudNavLink href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">
+                Dashboard
+            </MudNavLink>
 
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">CADASTROS</MudText>
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">CADASTROS</MudText>
 
-    <MudNavLink href="/familias" Icon="@Icons.Material.Filled.People">
-        Famílias
-    </MudNavLink>
+            <MudNavLink href="/familias" Icon="@Icons.Material.Filled.People">
+                Famílias
+            </MudNavLink>
 
-    <MudNavLink href="/equipamentos" Icon="@Icons.Material.Filled.HomeRepairService">
-        Equipamentos
-    </MudNavLink>
+            <MudNavLink href="/equipamentos" Icon="@Icons.Material.Filled.HomeRepairService">
+                Equipamentos
+            </MudNavLink>
 
-    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">AÇÕES</MudText>
+            <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">AÇÕES</MudText>
 
-    <MudNavLink href="/beneficios" Icon="@Icons.Material.Filled.CardGiftcard">
-        Cestas Básicas
-    </MudNavLink>
+            <MudNavLink href="/beneficios" Icon="@Icons.Material.Filled.CardGiftcard">
+                Cestas Básicas
+            </MudNavLink>
 
-    <MudNavLink href="/emprestimos" Icon="@Icons.Material.Filled.Handshake">
-        Empréstimos
-    </MudNavLink>
+            <MudNavLink href="/emprestimos" Icon="@Icons.Material.Filled.Handshake">
+                Empréstimos
+            </MudNavLink>
+        </Authorized>
+        <NotAuthorized>
+            <MudNavLink href="/login" Icon="@Icons.Material.Filled.Login">
+                Login
+            </MudNavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudNavMenu>

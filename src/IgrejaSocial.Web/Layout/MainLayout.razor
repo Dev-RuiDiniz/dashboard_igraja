@@ -1,5 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject ApiAuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" CloseButton="true" />
 <MudSnackbarProvider />
@@ -10,6 +15,19 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Igreja Social</MudText>
         <MudSpacer />
+        <AuthorizeView>
+            <Authorized Context="authState">
+                <MudText Typo="Typo.subtitle2" Class="mr-4">@authState.User.Identity?.Name</MudText>
+                <MudButton Variant="Variant.Outlined" Color="Color.Inherit" OnClick="Logout">
+                    Sair
+                </MudButton>
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Outlined" Color="Color.Inherit" OnClick="@(() => Navigation.NavigateTo("/login"))">
+                    Entrar
+                </MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
         <MudToggleIconButton @bind-Toggled="@_isDarkMode"
                              Icon="@Icons.Material.Filled.LightMode" Color="Color.Inherit"
                              ToggledIcon="@Icons.Material.Filled.DarkMode" ToggledColor="Color.Inherit" />
@@ -37,6 +55,13 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        AuthStateProvider.NotifyAuthenticationStateChanged();
+        Navigation.NavigateTo("/login");
     }
 
     // Customização de Cores (Opcional - Estilo Igreja)

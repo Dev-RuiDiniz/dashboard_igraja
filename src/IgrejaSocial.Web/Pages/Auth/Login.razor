@@ -1,0 +1,73 @@
+@page "/login"
+@attribute [AllowAnonymous]
+
+@using Microsoft.AspNetCore.Authorization
+@using IgrejaSocial.Domain.Models
+@using MudBlazor
+
+@inject AuthService AuthService
+@inject ApiAuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center">
+    <MudPaper Class="pa-6 mt-10 w-100" Elevation="2">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h5" Align="Align.Center">Acesso ao Painel</MudText>
+            <MudText Typo="Typo.body2" Align="Align.Center" Class="mb-2">
+                Entre com suas credenciais para continuar.
+            </MudText>
+
+            <MudForm @ref="_form" @bind-IsValid="_isValid">
+                <MudTextField T="string" Label="Email" @bind-Value="_model.Email"
+                              Variant="Variant.Outlined" Required="true" Immediate="true" />
+                <MudTextField T="string" Label="Senha" @bind-Value="_model.Password"
+                              Variant="Variant.Outlined" InputType="InputType.Password"
+                              Required="true" Immediate="true" />
+            </MudForm>
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Disabled="@(!_isValid || _loading)"
+                       OnClick="HandleLogin">
+                @if (_loading)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+                }
+                Entrar
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm? _form;
+    private bool _isValid;
+    private bool _loading;
+    private LoginRequest _model = new();
+
+    private async Task HandleLogin()
+    {
+        if (_form is not null)
+        {
+            await _form.Validate();
+        }
+
+        if (!_isValid)
+        {
+            return;
+        }
+
+        _loading = true;
+        var userInfo = await AuthService.LoginAsync(_model);
+        _loading = false;
+
+        if (userInfo is null)
+        {
+            Snackbar.Add("Não foi possível autenticar. Verifique suas credenciais.", Severity.Error);
+            return;
+        }
+
+        AuthStateProvider.NotifyAuthenticationStateChanged();
+        Snackbar.Add($"Bem-vindo(a), {userInfo.Email}!", Severity.Success);
+        Navigation.NavigateTo("/");
+    }
+}

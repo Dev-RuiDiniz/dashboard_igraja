@@ -1,8 +1,10 @@
 using System.Globalization;
 using System.Text;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Identity;
 using IgrejaSocial.Domain.Models;
 using IgrejaSocial.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,7 @@ namespace IgrejaSocial.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleNames.Administrador)]
     public class RelatoriosController : ControllerBase
     {
         private readonly IgrejaSocialDbContext _context;
@@ -19,6 +22,9 @@ namespace IgrejaSocial.API.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Retorna o consolidado mensal de entregas e empréstimos.
+        /// </summary>
         [HttpGet("mensal")]
         public async Task<ActionResult<RelatorioMensalDto>> GetRelatorioMensal([FromQuery] int? mes, [FromQuery] int? ano)
         {
@@ -46,6 +52,9 @@ namespace IgrejaSocial.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Exporta em CSV os atendimentos de cesta básica no mês.
+        /// </summary>
         [HttpGet("atendimentos-cestas/export")]
         public async Task<IActionResult> ExportarCestasEntregues([FromQuery] int? mes, [FromQuery] int? ano)
         {

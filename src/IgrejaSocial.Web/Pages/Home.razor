@@ -1,4 +1,7 @@
 ﻿@page "/"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
 @inject IDashboardService DashboardService
 @inject RelatorioService RelatorioService
 

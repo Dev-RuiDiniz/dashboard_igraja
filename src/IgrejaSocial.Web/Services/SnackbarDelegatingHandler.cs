@@ -1,15 +1,19 @@
+using System.Net;
 using System.Net.Http;
 using MudBlazor;
+using Microsoft.AspNetCore.Components;
 
 namespace IgrejaSocial.Web.Services
 {
     public class SnackbarDelegatingHandler : DelegatingHandler
     {
         private readonly ISnackbar _snackbar;
+        private readonly NavigationManager _navigationManager;
 
-        public SnackbarDelegatingHandler(ISnackbar snackbar)
+        public SnackbarDelegatingHandler(ISnackbar snackbar, NavigationManager navigationManager)
         {
             _snackbar = snackbar;
+            _navigationManager = navigationManager;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -18,7 +22,16 @@ namespace IgrejaSocial.Web.Services
             {
                 var response = await base.SendAsync(request, cancellationToken);
 
-                if (!response.IsSuccessStatusCode)
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    _snackbar.Add("Sessão expirada. Faça login novamente.", Severity.Warning);
+                    _navigationManager.NavigateTo("/login");
+                }
+                else if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    _snackbar.Add("Você não tem permissão para essa ação.", Severity.Warning);
+                }
+                else if (!response.IsSuccessStatusCode)
                 {
                     var content = response.Content is null
                         ? string.Empty

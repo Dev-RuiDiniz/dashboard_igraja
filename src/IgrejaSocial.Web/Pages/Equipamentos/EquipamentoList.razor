@@ -1,4 +1,7 @@
 @page "/equipamentos"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
 @using IgrejaSocial.Domain.Entities
 @using IgrejaSocial.Domain.Enums
 @inject EquipamentoService EquipamentoService

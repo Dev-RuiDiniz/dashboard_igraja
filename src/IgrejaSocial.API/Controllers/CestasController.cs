@@ -1,13 +1,16 @@
 using IgrejaSocial.Domain.Entities;
 using IgrejaSocial.Domain.Enums;
+using IgrejaSocial.Domain.Identity;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IgrejaSocial.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleNames.Administrador + "," + RoleNames.Voluntario)]
     public class CestasController : ControllerBase
     {
         private readonly IFamiliaRepository _familiaRepository;
@@ -21,6 +24,9 @@ namespace IgrejaSocial.API.Controllers
             _registroRepository = registroRepository;
         }
 
+        /// <summary>
+        /// Registra a entrega de cesta básica para uma família.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<RegistroAtendimento>> RegistrarEntrega(CestaBasicaEntregaRequest request)
         {
