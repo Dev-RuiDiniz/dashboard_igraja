@@ -7,6 +7,9 @@ using IgrejaSocial.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace IgrejaSocial.API.Controllers
 {
@@ -87,6 +90,141 @@ namespace IgrejaSocial.API.Controllers
             var bytes = Encoding.UTF8.GetBytes(csv.ToString());
             var fileName = $"familias-atendidas-{referencia:MM-yyyy}.csv";
             return File(bytes, "text/csv", fileName);
+        }
+
+        /// <summary>
+        /// Gera relatório de KPIs em PDF (giro de estoque, impacto social e atendimentos).
+        /// </summary>
+        [HttpGet("kpis/pdf")]
+        public async Task<IActionResult> GerarRelatorioKpisPdf([FromQuery] int meses = 6)
+        {
+            var totalEquipamentos = await _context.Equipamentos.CountAsync();
+            var totalEmprestimosPeriodo = await _context.RegistrosAtendimento
+                .CountAsync(r => r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento
+                                 && r.DataEmprestimo >= DateTime.Today.AddMonths(-meses));
+
+            var totalCestasPeriodo = await _context.RegistrosAtendimento
+                .CountAsync(r => r.TipoAtendimento == TipoAtendimento.CestaBasica
+                                 && r.DataEntrega.HasValue
+                                 && r.DataEntrega.Value >= DateTime.Today.AddMonths(-meses));
+
+            var totalVisitasPeriodo = await _context.RegistrosVisitas
+                .CountAsync(v => v.DataConclusao.HasValue
+                                 && v.DataConclusao.Value >= DateTime.Today.AddMonths(-meses));
+
+            var totalDoacoesPeriodo = await _context.DoacoesAvulsas
+                .CountAsync(d => d.DataRegistro >= DateTime.Today.AddMonths(-meses));
+
+            var giro = totalEquipamentos == 0 ? 0 : (decimal)totalEmprestimosPeriodo / totalEquipamentos;
+
+            var periodos = new List<KpiAtendimentoPeriodoDto>();
+            for (var i = meses - 1; i >= 0; i--)
+            {
+                var referencia = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-i);
+                var inicio = referencia;
+                var fim = referencia.AddMonths(1);
+
+                var totalPeriodo = await _context.RegistrosAtendimento
+                    .CountAsync(r =>
+                        ((r.TipoAtendimento == TipoAtendimento.CestaBasica && r.DataEntrega.HasValue && r.DataEntrega.Value >= inicio && r.DataEntrega.Value < fim)
+                        || (r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento && r.DataEmprestimo >= inicio && r.DataEmprestimo < fim)));
+
+                totalPeriodo += await _context.RegistrosVisitas
+                    .CountAsync(v => v.DataConclusao.HasValue && v.DataConclusao.Value >= inicio && v.DataConclusao.Value < fim);
+
+                periodos.Add(new KpiAtendimentoPeriodoDto
+                {
+                    Periodo = referencia.ToString("MMM/yyyy", CultureInfo.GetCultureInfo("pt-BR")),
+                    TotalAtendimentos = totalPeriodo
+                });
+            }
+
+            var kpis = new KpiReportDto
+            {
+                GiroEstoque = giro,
+                ImpactoSocial = totalCestasPeriodo + totalVisitasPeriodo + totalDoacoesPeriodo,
+                AtendimentosPorPeriodo = periodos
+            };
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Header().Row(row =>
+                    {
+                        row.RelativeItem().Text("Relatório de KPIs").FontSize(20).SemiBold();
+                        row.ConstantItem(120).AlignRight().Text(DateTime.Now.ToString("dd/MM/yyyy"));
+                    });
+
+                    page.Content().Column(column =>
+                    {
+                        column.Spacing(12);
+
+                        column.Item().Row(row =>
+                        {
+                            row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(12)
+                                .Column(item =>
+                                {
+                                    item.Item().Text("Giro de Estoque").SemiBold();
+                                    item.Item().Text(kpis.GiroEstoque.ToString("P1"));
+                                });
+                            row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(12)
+                                .Column(item =>
+                                {
+                                    item.Item().Text("Impacto Social").SemiBold();
+                                    item.Item().Text($"{kpis.ImpactoSocial} atendimentos");
+                                });
+                            row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(12)
+                                .Column(item =>
+                                {
+                                    item.Item().Text("Empréstimos no período").SemiBold();
+                                    item.Item().Text(totalEmprestimosPeriodo.ToString());
+                                });
+                        });
+
+                        column.Item().Text("Atendimentos por período").SemiBold().FontSize(14);
+
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(120);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("Período");
+                                header.Cell().Element(CellStyle).AlignRight().Text("Total");
+                            });
+
+                            foreach (var periodo in kpis.AtendimentosPorPeriodo)
+                            {
+                                table.Cell().Element(CellStyle).Text(periodo.Periodo);
+                                table.Cell().Element(CellStyle).AlignRight().Text(periodo.TotalAtendimentos.ToString());
+                            }
+
+                            static IContainer CellStyle(IContainer container)
+                            {
+                                return container.BorderBottom(1)
+                                    .BorderColor(Colors.Grey.Lighten3)
+                                    .PaddingVertical(6);
+                            }
+                        });
+                    });
+
+                    page.Footer().AlignRight().Text(text =>
+                    {
+                        text.Span("Página ");
+                        text.CurrentPageNumber();
+                        text.Span(" de ");
+                        text.TotalPages();
+                    });
+                });
+            }).GeneratePdf();
+
+            return File(pdf, "application/pdf", $"relatorio-kpis-{DateTime.Today:yyyy-MM-dd}.pdf");
         }
     }
 }

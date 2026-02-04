@@ -11,8 +11,11 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // --- 1. Configuração do CORS  ---
 builder.Services.AddCors(options =>

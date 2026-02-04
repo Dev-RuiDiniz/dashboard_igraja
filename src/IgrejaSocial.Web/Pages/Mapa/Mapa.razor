@@ -1,0 +1,33 @@
+@page "/mapa"
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using IgrejaSocial.Domain.Entities
+@inject IJSRuntime JsRuntime
+@inject FamiliaService FamiliaService
+
+<MudStack Spacing="2">
+    <MudText Typo="Typo.h5">Mapa das Famílias</MudText>
+    <MudText Typo="Typo.body2" Color="Color.Secondary">
+        Pins baseados em latitude e longitude cadastradas.
+    </MudText>
+
+    <div id="mapa-familias" style="height: 500px; border-radius: 8px;"></div>
+</MudStack>
+
+@code {
+    private List<Familia> _familias = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _familias = await FamiliaService.GetFamiliasAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("mapaFamilias.iniciar", "mapa-familias", _familias);
+        }
+    }
+}
