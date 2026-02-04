@@ -12,15 +12,26 @@
         Pins baseados em latitude e longitude cadastradas.
     </MudText>
 
-    <div id="mapa-familias" style="height: 500px; border-radius: 8px;"></div>
+    <MudPaper Class="pa-0" Style="position: relative;">
+        @if (_carregando)
+        {
+            <MudStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="height: 500px;">
+                <MudProgressCircular Indeterminate="true" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.body2" Class="mt-2">Carregando mapa...</MudText>
+            </MudStack>
+        }
+        <div id="mapa-familias" style="height: 500px; border-radius: 8px;"></div>
+    </MudPaper>
 </MudStack>
 
 @code {
     private List<Familia> _familias = new();
+    private bool _carregando = true;
 
     protected override async Task OnInitializedAsync()
     {
         _familias = await FamiliaService.GetFamiliasAsync();
+        _carregando = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

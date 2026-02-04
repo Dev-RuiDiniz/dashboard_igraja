@@ -5,6 +5,7 @@ using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IgrejaSocial.API.Controllers
 {
@@ -54,6 +55,7 @@ namespace IgrejaSocial.API.Controllers
                 DataEntrega = dataEntrega,
                 DataEmprestimo = dataEntrega,
                 UsuarioEntrega = User?.Identity?.Name ?? "Sistema",
+                UsuarioId = User?.FindFirstValue(ClaimTypes.NameIdentifier),
                 Observacoes = request.Observacoes ?? string.Empty
             };
 

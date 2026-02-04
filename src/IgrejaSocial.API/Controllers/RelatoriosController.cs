@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using IgrejaSocial.Domain.Enums;
@@ -53,6 +54,42 @@ namespace IgrejaSocial.API.Controllers
                 TotalCestasEntregues = totalCestas,
                 TotalEquipamentosEmprestados = totalEquipamentos
             });
+        }
+
+        /// <summary>
+        /// Retorna o acumulado de cestas entregues por mês no ano.
+        /// </summary>
+        [HttpGet("cestas/anual")]
+        public async Task<ActionResult<IEnumerable<CestasAnuaisDto>>> GetCestasAnuais([FromQuery] int? ano)
+        {
+            var referenciaAno = ano ?? DateTime.Today.Year;
+            var inicio = new DateTime(referenciaAno, 1, 1);
+            var fim = inicio.AddYears(1);
+
+            var totais = await _context.RegistrosAtendimento
+                .Where(r => r.TipoAtendimento == TipoAtendimento.CestaBasica
+                            && r.DataEntrega.HasValue
+                            && r.DataEntrega.Value >= inicio
+                            && r.DataEntrega.Value < fim)
+                .GroupBy(r => r.DataEntrega!.Value.Month)
+                .Select(g => new { Mes = g.Key, Total = g.Count() })
+                .ToListAsync();
+
+            var acumulado = 0;
+            var resultado = new List<CestasAnuaisDto>();
+            for (var mes = 1; mes <= 12; mes++)
+            {
+                var totalMes = totais.FirstOrDefault(t => t.Mes == mes)?.Total ?? 0;
+                acumulado += totalMes;
+                resultado.Add(new CestasAnuaisDto
+                {
+                    Mes = mes,
+                    TotalEntregue = totalMes,
+                    TotalAcumulado = acumulado
+                });
+            }
+
+            return Ok(resultado);
         }
 
         /// <summary>
@@ -116,6 +153,15 @@ namespace IgrejaSocial.API.Controllers
                 .CountAsync(d => d.DataRegistro >= DateTime.Today.AddMonths(-meses));
 
             var giro = totalEquipamentos == 0 ? 0 : (decimal)totalEmprestimosPeriodo / totalEquipamentos;
+            var emprestimosConcluidos = await _context.RegistrosAtendimento
+                .Where(r => r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento
+                            && r.DataDevolucaoReal.HasValue)
+                .ToListAsync();
+
+            var tempoMedioDias = emprestimosConcluidos.Count == 0
+                ? 0
+                : emprestimosConcluidos.Average(r =>
+                    (r.DataDevolucaoReal!.Value.Date - r.DataEmprestimo.Date).TotalDays);
 
             var periodos = new List<KpiAtendimentoPeriodoDto>();
             for (var i = meses - 1; i >= 0; i--)
@@ -153,8 +199,12 @@ namespace IgrejaSocial.API.Controllers
                     page.Margin(30);
                     page.Header().Row(row =>
                     {
-                        row.RelativeItem().Text("Relatório de KPIs").FontSize(20).SemiBold();
-                        row.ConstantItem(120).AlignRight().Text(DateTime.Now.ToString("dd/MM/yyyy"));
+                        row.RelativeItem().Column(header =>
+                        {
+                            header.Item().Text("Igreja Social").FontSize(16).SemiBold();
+                            header.Item().Text("Relatório de KPIs").FontSize(20).SemiBold();
+                        });
+                        row.ConstantItem(160).AlignRight().Text($"Emitido em {DateTime.Now:dd/MM/yyyy}");
                     });
 
                     page.Content().Column(column =>
@@ -180,6 +230,12 @@ namespace IgrejaSocial.API.Controllers
                                 {
                                     item.Item().Text("Empréstimos no período").SemiBold();
                                     item.Item().Text(totalEmprestimosPeriodo.ToString());
+                                });
+                            row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(12)
+                                .Column(item =>
+                                {
+                                    item.Item().Text("Tempo Médio de Empréstimo").SemiBold();
+                                    item.Item().Text($"{tempoMedioDias:F1} dias");
                                 });
                         });
 

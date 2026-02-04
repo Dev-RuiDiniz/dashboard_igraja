@@ -27,6 +27,9 @@ namespace IgrejaSocial.Domain.Entities
         [StringLength(150)]
         public string? UsuarioEntrega { get; set; }
 
+        [StringLength(450)]
+        public string? UsuarioId { get; set; }
+
         [Required]
         [DataType(DataType.Date)]
         public DateTime DataEmprestimo { get; set; } = DateTime.Now;

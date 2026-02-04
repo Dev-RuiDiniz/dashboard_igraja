@@ -66,5 +66,19 @@ namespace IgrejaSocial.Web.Services
                 return new List<VisitaAtrasadaDto>();
             }
         }
+
+        public async Task<List<EquipamentoEstoqueBaixoDto>> GetEstoqueBaixoAsync(int limite)
+        {
+            try
+            {
+                var response = await _httpClient
+                    .GetFromJsonAsync<List<EquipamentoEstoqueBaixoDto>>($"api/dashboard/estoque-baixo?limite={limite}");
+                return response ?? new List<EquipamentoEstoqueBaixoDto>();
+            }
+            catch
+            {
+                return new List<EquipamentoEstoqueBaixoDto>();
+            }
+        }
     }
 }
