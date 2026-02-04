@@ -1,39 +1,42 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj": {}
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj": {
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
+        "projectUniqueName": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
         "projectName": "IgrejaSocial.API",
-        "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
-        "packagesPath": "C:\\Users\\Rui Francisco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\obj\\",
+        "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\IgrejaSocial.API.csproj",
+        "packagesPath": "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Rui Francisco\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\RUI FRANCISCO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj"
               },
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj"
               },
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj"
               }
             }
           }
@@ -80,6 +83,10 @@
               "target": "Package",
               "version": "[8.0.4, )"
             },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2023.12.6, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
@@ -102,7 +109,7 @@
               "version": "[8.0.23, 8.0.23]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.win-arm64",
+              "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[8.0.23, 8.0.23]"
             },
             {
@@ -126,30 +133,33 @@
         }
       }
     },
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj": {
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
+        "projectUniqueName": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
         "projectName": "IgrejaSocial.Application",
-        "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
-        "packagesPath": "C:\\Users\\Rui Francisco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\obj\\",
+        "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
+        "packagesPath": "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Rui Francisco\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\RUI FRANCISCO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
               }
             }
           }
@@ -209,22 +219,25 @@
         }
       }
     },
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj",
         "projectName": "IgrejaSocial.Domain",
-        "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj",
-        "packagesPath": "C:\\Users\\Rui Francisco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\obj\\",
+        "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj",
+        "packagesPath": "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Rui Francisco\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\RUI FRANCISCO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -282,30 +295,33 @@
         }
       }
     },
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj": {
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj",
         "projectName": "IgrejaSocial.Infrastructure",
-        "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Rui Francisco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\IgrejaSocial.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Rui Francisco\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\RUI FRANCISCO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
               }
             }
           }
@@ -326,6 +342,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.4, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -363,6 +383,9 @@
             }
           ],
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
@@ -371,30 +394,33 @@
         }
       }
     },
-    "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj": {
+    "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj",
+        "projectUniqueName": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj",
         "projectName": "IgrejaSocial.Web",
-        "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj",
-        "packagesPath": "C:\\Users\\Rui Francisco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\obj\\",
+        "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\IgrejaSocial.Web.csproj",
+        "packagesPath": "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Web\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Rui Francisco\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\RUI FRANCISCO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
-                "projectPath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
+              "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj": {
+                "projectPath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Domain\\IgrejaSocial.Domain.csproj"
               }
             }
           }
@@ -415,6 +441,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Components.Authorization": {
+              "target": "Package",
+              "version": "[8.0.4, )"
+            },
             "Microsoft.AspNetCore.Components.WebAssembly": {
               "target": "Package",
               "version": "[8.0.4, )"

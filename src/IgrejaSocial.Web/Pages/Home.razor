@@ -154,7 +154,7 @@
                     <RowTemplate>
                         <MudTd DataLabel="Tipo">@context.Tipo</MudTd>
                         <MudTd DataLabel="Disponíveis">
-                            <MudChip Color="Color.Warning" Size="Size.Small" Variant="Variant.Text">
+                            <MudChip T="int" Color="Color.Warning" Size="Size.Small" Variant="Variant.Text">
                                 @context.Disponiveis
                             </MudChip>
                         </MudTd>
@@ -201,7 +201,7 @@
                                 : "Sem registro")
                         </MudTd>
                         <MudTd DataLabel="Dias">
-                            <MudChip Color="Color.Error" Size="Size.Small" Variant="Variant.Text">
+                            <MudChip T="int"Color="Color.Error" Size="Size.Small" Variant="Variant.Text">
                                 @context.DiasEmAberto
                             </MudChip>
                         </MudTd>
@@ -228,7 +228,7 @@
                     </MudStack>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudGrid Spacing="1" Justify="JustifyContent.FlexEnd">
+                    <MudGrid Spacing="1" Justify="Justify.FlexEnd">
                         <MudItem xs="12" sm="6">
                             <MudButton FullWidth="true" Variant="Variant.Outlined" Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.Download" OnClick="DownloadCestasAtendidas">

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using IgrejaSocial.Domain.Interfaces;
 using IgrejaSocial.Domain.Models;
 using System.Net.Http.Json;

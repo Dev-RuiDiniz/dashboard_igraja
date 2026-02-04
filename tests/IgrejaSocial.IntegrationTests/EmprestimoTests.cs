@@ -7,6 +7,9 @@ using IgrejaSocial.Domain.Models;
 using IgrejaSocial.Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using System.Net.Http;
+using System.Threading.Tasks;
+
 
 namespace IgrejaSocial.IntegrationTests
 {

@@ -1,30 +1,44 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Http;
 using IgrejaSocial.Web;
+using IgrejaSocial.Web.Services;
 using MudBlazor.Services;
-using IgrejaSocial.Web.Services; // Adicione esta linha para resolver o erro CS0246
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// 1. Configuração do HttpClient com handler de notificação global
-builder.Services.AddScoped<SnackbarDelegatingHandler>();
-builder.Services.AddHttpClient("Api", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-    .AddHttpMessageHandler<SnackbarDelegatingHandler>();
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
+// ✅ URL DA API (troque pela porta real da sua API)
+var apiBaseUrl = "https://localhost:7250/"; // EXEMPLO
 
-// 2. Registro do MudBlazor
+// 1) HttpClient apontando para a API (não para o Web)
+builder.Services.AddScoped<SnackbarDelegatingHandler>();
+
+builder.Services.AddHttpClient("Api", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5099/");
+})
+.AddHttpMessageHandler<SnackbarDelegatingHandler>();
+
+builder.Services.AddScoped(sp =>
+    sp.GetRequiredService<IHttpClientFactory>().CreateClient("Api"));
+
+// 2) MudBlazor
 builder.Services.AddMudServices();
 
-// 3. Autenticação e Autorização (Blazor WASM)
+// 3) Auth / Authorization
 builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 
-// 4. Injeção de Dependência dos seus Serviços
+builder.Services.AddScoped<AuthService>();
+
+// ✅ Registre o tipo concreto também (resolve erro do MainLayout)
+builder.Services.AddScoped<ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
+    sp.GetRequiredService<ApiAuthenticationStateProvider>());
+
+// 4) Serviços
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<FamiliaService>();
 builder.Services.AddScoped<EquipamentoService>();

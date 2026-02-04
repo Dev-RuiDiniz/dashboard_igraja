@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "w1M03llE5iw=",
+  "dgSpecHash": "5MMQ03qu/QE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rui Francisco\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
+  "projectFilePath": "C:\\Users\\RUI FRANCISCO\\Documents\\GitHub\\dashboard_igraja\\src\\IgrejaSocial.Application\\IgrejaSocial.Application.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Rui Francisco\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
-    "C:\\Users\\Rui Francisco\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
-    "C:\\Users\\Rui Francisco\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.23\\microsoft.netcore.app.ref.8.0.23.nupkg.sha512",
-    "C:\\Users\\Rui Francisco\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.23\\microsoft.windowsdesktop.app.ref.8.0.23.nupkg.sha512",
-    "C:\\Users\\Rui Francisco\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.23\\microsoft.aspnetcore.app.ref.8.0.23.nupkg.sha512"
+    "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.23\\microsoft.netcore.app.ref.8.0.23.nupkg.sha512",
+    "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.23\\microsoft.windowsdesktop.app.ref.8.0.23.nupkg.sha512",
+    "C:\\Users\\RUI FRANCISCO\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.23\\microsoft.aspnetcore.app.ref.8.0.23.nupkg.sha512"
   ],
   "logs": []
 }

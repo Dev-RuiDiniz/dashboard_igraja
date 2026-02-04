@@ -19,6 +19,7 @@ namespace IgrejaSocial.Domain.Entities
 
         [Required(ErrorMessage = "O CPF é obrigatório.")]
         [Cpf]
+        [MaxLength(11)]
         public string CpfResponsavel { get; set; } = string.Empty;
 
         [StringLength(20, ErrorMessage = "O RG deve ter no máximo 20 caracteres.")]

@@ -47,7 +47,10 @@
         <span class="dismiss">🗙</span>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+    Blazor.start();
+    </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="js/download.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

@@ -1,12 +1,19 @@
-﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+﻿@using IgrejaSocial.Web.Pages
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     <NotAuthorizedPage />
                 </NotAuthorized>
             </AuthorizeRouteView>
+
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
+
+        <NotFound>
+            <Pages.NotFound />
+        </NotFound>
     </Router>
 </CascadingAuthenticationState>
