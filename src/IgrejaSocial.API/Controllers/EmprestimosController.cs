@@ -44,7 +44,7 @@ namespace IgrejaSocial.API.Controllers
                 return BadRequest("A data de previsão de devolução é obrigatória.");
             }
 
-            if (registro.DataPrevistaDevolucao.Value.Date < DateTime.Today)
+            if (registro.DataPrevistaDevolucao.Value.Date < DateTime.UtcNow.Date)
             {
                 return BadRequest("A data de previsão não pode ser retroativa.");
             }
@@ -71,7 +71,7 @@ namespace IgrejaSocial.API.Controllers
             _equipamentoRepository.Atualizar(equipamento);
 
             registro.TipoAtendimento = TipoAtendimento.EmprestimoEquipamento;
-            registro.DataEmprestimo = DateTime.Now;
+            registro.DataEmprestimo = DateTime.UtcNow;
             registro.UsuarioEntrega = User?.Identity?.Name ?? "Sistema";
             registro.UsuarioId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
             await _registroRepository.AdicionarAsync(registro);
@@ -86,7 +86,7 @@ namespace IgrejaSocial.API.Controllers
         [HttpPost("devolucao")]
         public async Task<ActionResult> RegistrarDevolucao(DevolucaoEquipamentoRequest request)
         {
-            if (request.DataDevolucaoReal.Date > DateTime.Today)
+            if (request.DataDevolucaoReal.Date > DateTime.UtcNow.Date)
             {
                 return BadRequest("A data de devolução não pode ser futura.");
             }

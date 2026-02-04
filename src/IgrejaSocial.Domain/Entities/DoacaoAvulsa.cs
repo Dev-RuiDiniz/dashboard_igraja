@@ -24,7 +24,7 @@ namespace IgrejaSocial.Domain.Entities
         public string? UnidadeMedida { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime DataRegistro { get; set; } = DateTime.Now;
+        public DateTime DataRegistro { get; set; } = DateTime.UtcNow;
 
         [StringLength(150)]
         public string? UsuarioRegistro { get; set; }

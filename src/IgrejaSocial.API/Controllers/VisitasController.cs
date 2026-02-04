@@ -58,7 +58,7 @@ namespace IgrejaSocial.API.Controllers
                 FamiliaId = request.FamiliaId,
                 Solicitante = solicitante,
                 Observacoes = request.Observacoes,
-                DataSolicitacao = DateTime.Now
+                DataSolicitacao = DateTime.UtcNow
             };
 
             _context.RegistrosVisitas.Add(visita);
@@ -83,7 +83,7 @@ namespace IgrejaSocial.API.Controllers
                 return BadRequest("Visita já concluída.");
             }
 
-            visita.DataConclusao = DateTime.Now;
+            visita.DataConclusao = DateTime.UtcNow;
             visita.Executor = User?.Identity?.Name ?? "Sistema";
             if (!string.IsNullOrWhiteSpace(request.Observacoes))
             {

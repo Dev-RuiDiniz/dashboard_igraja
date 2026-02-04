@@ -26,7 +26,7 @@ namespace IgrejaSocial.Domain.Entities
         public DateTime? DataNascimento { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime DataCadastro { get; set; } = DateTime.Now;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
 
         [Phone(ErrorMessage = "Telefone em formato inválido.")]
         public string? TelefoneContato { get; set; }

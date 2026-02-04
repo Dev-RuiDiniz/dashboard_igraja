@@ -80,7 +80,7 @@ namespace IgrejaSocial.API.Controllers
         [HttpGet("atencao")]
         public async Task<ActionResult<IEnumerable<FamiliaAtencaoDto>>> GetFamiliasAtencao()
         {
-            var limiteData = DateTime.Today.AddMonths(-2);
+            var limiteData = DateTime.UtcNow.Date.AddMonths(-2);
             var familias = await _context.Familias.Include(f => f.Membros).ToListAsync();
             var ultimasCestas = await _context.RegistrosAtendimento
                 .Where(r => r.TipoAtendimento == TipoAtendimento.CestaBasica && r.DataEntrega.HasValue)
@@ -118,7 +118,7 @@ namespace IgrejaSocial.API.Controllers
         public async Task<ActionResult<IEnumerable<VisitaAtrasadaDto>>> GetVisitasAtrasadas()
         {
             var limiteDias = 60;
-            var limiteData = DateTime.Today.AddDays(-limiteDias);
+            var limiteData = DateTime.UtcNow.Date.AddDays(-limiteDias);
 
             var familias = await _context.Familias.AsNoTracking().ToListAsync();
             var visitas = await _context.RegistrosVisitas
@@ -141,7 +141,7 @@ namespace IgrejaSocial.API.Controllers
                     visitasAbertas.TryGetValue(familia.Id, out var visitaAberta);
                     ultimasConclusoes.TryGetValue(familia.Id, out var ultimaConclusao);
                     var referencia = visitaAberta?.DataSolicitacao ?? ultimaConclusao ?? familia.DataCadastro;
-                    var dias = (DateTime.Today - referencia.Date).Days;
+                    var dias = (DateTime.UtcNow.Date - referencia.Date).Days;
 
                     return new VisitaAtrasadaDto
                     {

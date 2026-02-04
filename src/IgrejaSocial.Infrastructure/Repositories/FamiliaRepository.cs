@@ -68,7 +68,7 @@ namespace IgrejaSocial.Infrastructure.Repositories
 
         public async Task<bool> JaRecebeuBeneficioNoMesAtualAsync(Guid familiaId)
         {
-            var inicioDoMes = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var inicioDoMes = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             
             // Lógica de validação temporal para bloqueio na UI (Tarefa 6 do Roadmap)
             return await _context.Familias

@@ -33,7 +33,7 @@ namespace IgrejaSocial.Domain.Entities
         public StatusAcompanhamento Status { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime DataCadastro { get; set; } = DateTime.Now;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
 
         [DataType(DataType.Date)]
         public DateTime? DataNascimentoResponsavel { get; set; }

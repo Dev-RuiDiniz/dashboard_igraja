@@ -32,7 +32,7 @@ namespace IgrejaSocial.API.Controllers
         [HttpGet("mensal")]
         public async Task<ActionResult<RelatorioMensalDto>> GetRelatorioMensal([FromQuery] int? mes, [FromQuery] int? ano)
         {
-            var referencia = new DateTime(ano ?? DateTime.Today.Year, mes ?? DateTime.Today.Month, 1);
+            var referencia = new DateTime(ano ?? DateTime.UtcNow.Year, mes ?? DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             var inicio = referencia.Date;
             var fim = inicio.AddMonths(1);
 
@@ -62,8 +62,8 @@ namespace IgrejaSocial.API.Controllers
         [HttpGet("cestas/anual")]
         public async Task<ActionResult<IEnumerable<CestasAnuaisDto>>> GetCestasAnuais([FromQuery] int? ano)
         {
-            var referenciaAno = ano ?? DateTime.Today.Year;
-            var inicio = new DateTime(referenciaAno, 1, 1);
+            var referenciaAno = ano ?? DateTime.UtcNow.Year;
+            var inicio = new DateTime(referenciaAno, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var fim = inicio.AddYears(1);
 
             var totais = await _context.RegistrosAtendimento
@@ -98,7 +98,7 @@ namespace IgrejaSocial.API.Controllers
         [HttpGet("atendimentos-cestas/export")]
         public async Task<IActionResult> ExportarCestasEntregues([FromQuery] int? mes, [FromQuery] int? ano)
         {
-            var referencia = new DateTime(ano ?? DateTime.Today.Year, mes ?? DateTime.Today.Month, 1);
+            var referencia = new DateTime(ano ?? DateTime.UtcNow.Year, mes ?? DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             var inicio = referencia.Date;
             var fim = inicio.AddMonths(1);
 
@@ -138,19 +138,19 @@ namespace IgrejaSocial.API.Controllers
             var totalEquipamentos = await _context.Equipamentos.CountAsync();
             var totalEmprestimosPeriodo = await _context.RegistrosAtendimento
                 .CountAsync(r => r.TipoAtendimento == TipoAtendimento.EmprestimoEquipamento
-                                 && r.DataEmprestimo >= DateTime.Today.AddMonths(-meses));
+                                 && r.DataEmprestimo >= DateTime.UtcNow.Date.AddMonths(-meses));
 
             var totalCestasPeriodo = await _context.RegistrosAtendimento
                 .CountAsync(r => r.TipoAtendimento == TipoAtendimento.CestaBasica
                                  && r.DataEntrega.HasValue
-                                 && r.DataEntrega.Value >= DateTime.Today.AddMonths(-meses));
+                                 && r.DataEntrega.Value >= DateTime.UtcNow.Date.AddMonths(-meses));
 
             var totalVisitasPeriodo = await _context.RegistrosVisitas
                 .CountAsync(v => v.DataConclusao.HasValue
-                                 && v.DataConclusao.Value >= DateTime.Today.AddMonths(-meses));
+                                 && v.DataConclusao.Value >= DateTime.UtcNow.Date.AddMonths(-meses));
 
             var totalDoacoesPeriodo = await _context.DoacoesAvulsas
-                .CountAsync(d => d.DataRegistro >= DateTime.Today.AddMonths(-meses));
+                .CountAsync(d => d.DataRegistro >= DateTime.UtcNow.Date.AddMonths(-meses));
 
             var giro = totalEquipamentos == 0 ? 0 : (decimal)totalEmprestimosPeriodo / totalEquipamentos;
             var emprestimosConcluidos = await _context.RegistrosAtendimento
@@ -166,7 +166,7 @@ namespace IgrejaSocial.API.Controllers
             var periodos = new List<KpiAtendimentoPeriodoDto>();
             for (var i = meses - 1; i >= 0; i--)
             {
-                var referencia = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(-i);
+                var referencia = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-i);
                 var inicio = referencia;
                 var fim = referencia.AddMonths(1);
 
@@ -204,7 +204,7 @@ namespace IgrejaSocial.API.Controllers
                             header.Item().Text("Igreja Social").FontSize(16).SemiBold();
                             header.Item().Text("Relatório de KPIs").FontSize(20).SemiBold();
                         });
-                        row.ConstantItem(160).AlignRight().Text($"Emitido em {DateTime.Now:dd/MM/yyyy}");
+                        row.ConstantItem(160).AlignRight().Text($"Emitido em {DateTime.UtcNow:dd/MM/yyyy}");
                     });
 
                     page.Content().Column(column =>
@@ -280,7 +280,7 @@ namespace IgrejaSocial.API.Controllers
                 });
             }).GeneratePdf();
 
-            return File(pdf, "application/pdf", $"relatorio-kpis-{DateTime.Today:yyyy-MM-dd}.pdf");
+            return File(pdf, "application/pdf", $"relatorio-kpis-{DateTime.UtcNow:yyyy-MM-dd}.pdf");
         }
     }
 }
